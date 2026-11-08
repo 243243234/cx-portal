@@ -1,0 +1,1744 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>学习通三端分离控制台 (操作端 A)</title>
+  <style id='tw-precompiled'>
+*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.fixed{position:fixed}.sticky{position:sticky}.inset-0{inset:0px}.top-0{top:0px}.z-30{z-index:30}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.ml-1{margin-left:0.25rem}.mt-0\.5{margin-top:0.125rem}.mt-1\.5{margin-top:0.375rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-1\.5{height:0.375rem}.h-2\.5{height:0.625rem}.h-4{height:1rem}.h-44{height:11rem}.h-7{height:1.75rem}.min-h-\[260px\]{min-height:260px}.min-h-screen{min-height:100vh}.w-2\.5{width:0.625rem}.w-4{width:1rem}.w-44{width:11rem}.w-7{width:1.75rem}.w-full{width:100%}.max-w-\[235px\]{max-width:235px}.max-w-lg{max-width:32rem}.max-w-md{max-width:28rem}.shrink-0{flex-shrink:0}@keyframes pulse{50%{opacity:.5}}.animate-pulse{animation:pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite}.cursor-pointer{cursor:pointer}.select-none{-webkit-user-select:none;user-select:none}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-2\.5{gap:0.625rem}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-1\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.375rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.375rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-2\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.625rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-3\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.875rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.875rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded{border-radius:0.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-md{border-radius:0.375rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-4{border-width:4px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-amber-400{--tw-border-opacity:1;border-color:rgb(251 191 36 / var(--tw-border-opacity, 1))}.border-amber-500\/40{border-color:rgb(245 158 11 / 0.4)}.border-emerald-500\/30{border-color:rgb(16 185 129 / 0.3)}.border-emerald-500\/40{border-color:rgb(16 185 129 / 0.4)}.border-indigo-500\/30{border-color:rgb(99 102 241 / 0.3)}.border-indigo-500\/40{border-color:rgb(99 102 241 / 0.4)}.border-sky-500\/40{border-color:rgb(14 165 233 / 0.4)}.border-slate-700{--tw-border-opacity:1;border-color:rgb(51 65 85 / var(--tw-border-opacity, 1))}.border-slate-800{--tw-border-opacity:1;border-color:rgb(30 41 59 / var(--tw-border-opacity, 1))}.border-slate-800\/80{border-color:rgb(30 41 59 / 0.8)}.border-white{--tw-border-opacity:1;border-color:rgb(255 255 255 / var(--tw-border-opacity, 1))}.bg-amber-500\/20{background-color:rgb(245 158 11 / 0.2)}.bg-emerald-400{--tw-bg-opacity:1;background-color:rgb(52 211 153 / var(--tw-bg-opacity, 1))}.bg-emerald-500\/20{background-color:rgb(16 185 129 / 0.2)}.bg-emerald-600{--tw-bg-opacity:1;background-color:rgb(5 150 105 / var(--tw-bg-opacity, 1))}.bg-emerald-950\/50{background-color:rgb(2 44 34 / 0.5)}.bg-indigo-500\/20{background-color:rgb(99 102 241 / 0.2)}.bg-indigo-600{--tw-bg-opacity:1;background-color:rgb(79 70 229 / var(--tw-bg-opacity, 1))}.bg-indigo-600\/30{background-color:rgb(79 70 229 / 0.3)}.bg-sky-500\/20{background-color:rgb(14 165 233 / 0.2)}.bg-slate-800{--tw-bg-opacity:1;background-color:rgb(30 41 59 / var(--tw-bg-opacity, 1))}.bg-slate-900{--tw-bg-opacity:1;background-color:rgb(15 23 42 / var(--tw-bg-opacity, 1))}.bg-slate-900\/70{background-color:rgb(15 23 42 / 0.7)}.bg-slate-900\/80{background-color:rgb(15 23 42 / 0.8)}.bg-slate-900\/90{background-color:rgb(15 23 42 / 0.9)}.bg-slate-900\/95{background-color:rgb(15 23 42 / 0.95)}.bg-slate-950{--tw-bg-opacity:1;background-color:rgb(2 6 23 / var(--tw-bg-opacity, 1))}.bg-slate-950\/80{background-color:rgb(2 6 23 / 0.8)}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-emerald-600{--tw-gradient-from:#059669 var(--tw-gradient-from-position);--tw-gradient-to:rgb(5 150 105 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-indigo-600{--tw-gradient-from:#4f46e5 var(--tw-gradient-from-position);--tw-gradient-to:rgb(79 70 229 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-teal-600{--tw-gradient-to:#0d9488 var(--tw-gradient-to-position)}.to-violet-600{--tw-gradient-to:#7c3aed var(--tw-gradient-to-position)}.p-1{padding:0.25rem}.p-2{padding:0.5rem}.p-2\.5{padding:0.625rem}.p-3{padding:0.75rem}.p-3\.5{padding:0.875rem}.p-4{padding:1rem}.px-0\.5{padding-left:0.125rem;padding-right:0.125rem}.px-1\.5{padding-left:0.375rem;padding-right:0.375rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-3\.5{padding-top:0.875rem;padding-bottom:0.875rem}.pb-2\.5{padding-bottom:0.625rem}.pb-20{padding-bottom:5rem}.pt-1{padding-top:0.25rem}.pt-2{padding-top:0.5rem}.pt-4{padding-top:1rem}.text-center{text-align:center}.font-mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-base{font-size:1rem;line-height:1.5rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-normal{font-weight:400}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.tracking-tight{letter-spacing:-0.025em}.tracking-wider{letter-spacing:0.05em}.text-amber-200{--tw-text-opacity:1;color:rgb(253 230 138 / var(--tw-text-opacity, 1))}.text-amber-300{--tw-text-opacity:1;color:rgb(252 211 77 / var(--tw-text-opacity, 1))}.text-amber-400{--tw-text-opacity:1;color:rgb(251 191 36 / var(--tw-text-opacity, 1))}.text-emerald-300{--tw-text-opacity:1;color:rgb(110 231 183 / var(--tw-text-opacity, 1))}.text-emerald-400{--tw-text-opacity:1;color:rgb(52 211 153 / var(--tw-text-opacity, 1))}.text-indigo-300{--tw-text-opacity:1;color:rgb(165 180 252 / var(--tw-text-opacity, 1))}.text-rose-400{--tw-text-opacity:1;color:rgb(251 113 133 / var(--tw-text-opacity, 1))}.text-sky-300{--tw-text-opacity:1;color:rgb(125 211 252 / var(--tw-text-opacity, 1))}.text-sky-400{--tw-text-opacity:1;color:rgb(56 189 248 / var(--tw-text-opacity, 1))}.text-slate-200{--tw-text-opacity:1;color:rgb(226 232 240 / var(--tw-text-opacity, 1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225 / var(--tw-text-opacity, 1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184 / var(--tw-text-opacity, 1))}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.accent-indigo-500{accent-color:#6366f1}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-emerald-600\/30{--tw-shadow-color:rgb(5 150 105 / 0.3);--tw-shadow:var(--tw-shadow-colored)}.shadow-indigo-600\/30{--tw-shadow-color:rgb(79 70 229 / 0.3);--tw-shadow:var(--tw-shadow-colored)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.hover\:bg-amber-500\/30:hover{background-color:rgb(245 158 11 / 0.3)}.hover\:bg-emerald-500:hover{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.hover\:bg-indigo-500:hover{--tw-bg-opacity:1;background-color:rgb(99 102 241 / var(--tw-bg-opacity, 1))}.hover\:bg-slate-700:hover{--tw-bg-opacity:1;background-color:rgb(51 65 85 / var(--tw-bg-opacity, 1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.hover\:underline:hover{-webkit-text-decoration-line:underline;text-decoration-line:underline}.focus\:border-indigo-500:focus{--tw-border-opacity:1;border-color:rgb(99 102 241 / var(--tw-border-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.active\:scale-90:active{--tw-scale-x:.9;--tw-scale-y:.9;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.active\:scale-95:active{--tw-scale-x:.95;--tw-scale-y:.95;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}
+</style>
+  <script defer src="static/tailwind.min.js" onerror="this.onerror=null;this.src='https://cdn.tailwindcss.com'"></script>
+  <script defer src="static/html5-qrcode.min.js" onerror="this.onerror=null;this.src='https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js'"></script>
+  <script defer src="static/jsQR.min.js" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js'"></script>
+  <style>
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(148, 163, 184, 0.15);
+    }
+    #qr-reader {
+      position: relative;
+      overflow: hidden;
+      transition: min-height 0.25s ease, height 0.25s ease;
+      touch-action: manipulation;
+    }
+    #qr-reader video {
+      border-radius: 0.75rem;
+      object-fit: cover;
+      transform-origin: center center;
+      transition: transform 0.12s ease-out;
+    }
+    .qr-expanded {
+      min-height: 460px !important;
+      height: 66vh !important;
+    }
+  </style>
+</head>
+<body class="min-h-screen pb-20">
+
+  <!-- 顶部状态栏 -->
+  <header class="sticky top-0 z-30 glass-card px-4 py-2.5 border-b border-slate-800 space-y-1.5">
+    <div class="flex items-center justify-between">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <h1 class="text-base font-bold tracking-tight text-white">学习通双号签到控制台</h1>
+        </div>
+        <p id="tunnel-status-bar" class="text-[11px] text-emerald-400 font-mono mt-0.5 truncate max-w-[235px]">
+          🔒 HTTPS 加密隧道已就绪 (自适应开关VPN)
+        </p>
+      </div>
+      <button onclick="testBarkPush()" class="px-3 py-1.5 rounded-lg bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 text-xs font-medium active:scale-95 transition">
+        🔔 测 Bark
+      </button>
+    </div>
+    <!-- 双活通道一键切换条（兼容手机/电脑随时开关 VPN） -->
+    <div id="dual-channel-bar" class="hidden flex items-center justify-between gap-2 pt-1 border-t border-slate-800/80 text-[11px]">
+      <span class="text-slate-400 truncate">🌐 双通道保活 (开关VPN若卡顿可点右侧秒切):</span>
+      <div class="flex items-center gap-1.5 shrink-0">
+        <a id="link-fixed-tunnel" href="#" class="px-2 py-0.5 rounded bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-mono">📌 主通道</a>
+        <a id="link-cf-tunnel" href="#" class="px-2 py-0.5 rounded bg-sky-500/20 border border-sky-500/40 text-sky-300 font-mono">⚡ 备用通道</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-lg mx-auto px-4 pt-4 space-y-4">
+
+    <!-- 顶部双号独立 Session 与固定 iPhone 设备码速览 (点击任意卡片直接弹出快捷换 Cookie 窗口) -->
+    <section class="glass-card rounded-2xl p-3.5">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-semibold text-slate-300">双号独立 Session <span class="text-[11px] text-amber-300 font-normal">(👉 点击下方卡片可快捷换Cookie)</span></span>
+        <button onclick="checkHealth(true)" id="btn-health" class="text-xs text-sky-400 hover:underline flex items-center gap-1 shrink-0">
+          <span>🔄 立即巡检</span>
+        </button>
+      </div>
+      <div class="grid grid-cols-2 gap-2.5" id="account-badges">
+        <div class="p-2.5 rounded-xl bg-slate-900/70 border border-slate-800">
+          <div class="text-xs text-slate-400">大号 (主力号)</div>
+          <div class="text-sm font-semibold mt-0.5 text-slate-200">加载中...</div>
+        </div>
+        <div class="p-2.5 rounded-xl bg-slate-900/70 border border-slate-800">
+          <div class="text-xs text-slate-400">小号 (托管号)</div>
+          <div class="text-sm font-semibold mt-0.5 text-slate-200">加载中...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 导航选项卡 -->
+    <div class="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-slate-900 border border-slate-800">
+      <button onclick="switchTab('tab-qr')" id="tab-btn-qr" class="py-2 rounded-lg text-xs font-semibold bg-indigo-600 text-white transition">
+        📷 扫码接力签
+      </button>
+      <button onclick="switchTab('tab-loc')" id="tab-btn-loc" class="py-2 rounded-lg text-xs font-semibold text-slate-400 transition">
+        📍 位置/手势
+      </button>
+      <button onclick="switchTab('tab-acc')" id="tab-btn-acc" class="py-2 rounded-lg text-xs font-semibold text-slate-400 transition">
+        🔐 凭证维护
+      </button>
+    </div>
+
+    <!-- 共享坐标池选择器 (打开页面自动定位 + 预设教学楼兜底 + ±0.00003 微扰) -->
+    <section id="coord-selector-card" class="glass-card rounded-2xl p-4 space-y-3">
+      <div class="flex items-center justify-between">
+        <label class="text-xs font-semibold text-slate-300">📍 签到基准坐标源 (自动叠加 ±0.00003 微扰)</label>
+        <button onclick="fetchBrowserGPS()" id="btn-gps" class="px-2.5 py-1 rounded-md bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-medium active:scale-95">
+          🎯 获取当前 GPS
+        </button>
+      </div>
+
+      <select id="preset-location-select" onchange="onPresetLocationChange()" class="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500">
+        <option value="">正在加载预设教学楼坐标池...</option>
+      </select>
+
+      <div class="grid grid-cols-2 gap-2 text-xs">
+        <div class="bg-slate-900/80 px-3 py-2 rounded-lg border border-slate-800">
+          <span class="text-slate-400">基准经度:</span>
+          <span id="disp-lon" class="font-mono text-slate-200 ml-1">--</span>
+        </div>
+        <div class="bg-slate-900/80 px-3 py-2 rounded-lg border border-slate-800">
+          <span class="text-slate-400">基准纬度:</span>
+          <span id="disp-lat" class="font-mono text-slate-200 ml-1">--</span>
+        </div>
+      </div>
+
+      <div class="space-y-1.5 pt-1 border-t border-slate-800/80">
+        <div class="flex items-center justify-between">
+          <label for="custom-address" class="text-xs font-medium text-amber-300">📝 位置签到中文地址（可随时核对或修改）：</label>
+          <button onclick="saveCustomAddressToConfig()" class="px-2 py-0.5 rounded bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 text-[11px] active:scale-95">
+            💾 存为默认地址
+          </button>
+        </div>
+        <input id="custom-address" type="text" placeholder="请输入浙江本地中文地址..." class="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500" />
+      </div>
+    </section>
+
+    <!-- ==================== TAB 1: 摄像头扫码 + 动态码(enc)自动接力补签 ==================== -->
+    <section id="tab-qr" class="glass-card rounded-2xl p-4 space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-sm font-bold text-white">动态码一码双签 · 自动接力补签</h2>
+          <p class="text-xs text-slate-400 mt-0.5">若小号遇单次动态码过期，镜头保持开启自动捕捉下一帧补签</p>
+        </div>
+        <span id="scan-mode-badge" class="px-2 py-0.5 rounded bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 text-[11px]">标准模式</span>
+      </div>
+
+      <!-- 动态码(enc)接力模式高亮提示横幅 -->
+      <div id="relay-mode-banner" class="hidden p-3 rounded-xl bg-amber-500/20 border border-amber-400 text-amber-200 text-xs space-y-1 animate-pulse">
+        <div class="font-bold">⚡ 动态码接力补签模式已激活！</div>
+        <div>检测到上一帧二维码已被消耗/过期，请保持摄像头对准课堂大屏，大屏刷新下一帧二维码时将自动为【小号】极速补签！</div>
+      </div>
+
+      <!-- 摄像头实时预览容器 + 框体放大按钮 -->
+      <div class="space-y-2">
+        <div class="flex items-center justify-between text-[11px] text-slate-400 px-0.5">
+          <span>💡 支持双指捏合缩放、双击画面放大或下方倍率调节</span>
+          <button type="button" onclick="toggleExpandQrBox()" id="btn-expand-box" class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-sky-300 font-medium active:scale-95 transition">
+            ⛶ 放大取景框
+          </button>
+        </div>
+
+        <div id="qr-reader" class="w-full overflow-hidden rounded-xl bg-slate-950 border border-slate-800 min-h-[260px] flex items-center justify-center text-xs text-slate-500 select-none">
+          点击下方【🎥 实时取景扫码】对准课堂二维码
+        </div>
+
+        <!-- 实时取景无级变焦控制栏 (1.0x ~ 5.0x 光学+高清中心裁切双引擎) -->
+        <div id="camera-zoom-panel" class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2">
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-slate-300 font-medium">🔍 远距大屏放大倍率：<strong id="zoom-val-label" class="text-amber-300 font-mono">1.0x</strong> <span id="zoom-engine-tag" class="text-[10px] text-slate-400 ml-1">(支持双指缩放/双击画面)</span></span>
+            <div class="flex items-center gap-1">
+              <button type="button" onclick="setCameraZoom(1.0)" class="zoom-preset-btn px-2 py-0.5 rounded bg-indigo-600 text-white text-[11px] font-mono">1x</button>
+              <button type="button" onclick="setCameraZoom(1.5)" class="zoom-preset-btn px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[11px] font-mono">1.5x</button>
+              <button type="button" onclick="setCameraZoom(2.0)" class="zoom-preset-btn px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[11px] font-mono">2x</button>
+              <button type="button" onclick="setCameraZoom(3.0)" class="zoom-preset-btn px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[11px] font-mono">3x</button>
+              <button type="button" onclick="setCameraZoom(5.0)" class="zoom-preset-btn px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[11px] font-mono">5x</button>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="stepCameraZoom(-0.5)" class="w-7 h-7 rounded-lg bg-slate-800 border border-slate-700 text-slate-200 font-bold text-sm flex items-center justify-center active:scale-90">−</button>
+            <input id="camera-zoom-slider" type="range" min="1.0" max="5.0" step="0.1" value="1.0" oninput="setCameraZoom(parseFloat(this.value))" class="w-full accent-indigo-500 h-1.5 bg-slate-800 rounded-lg cursor-pointer" />
+            <button type="button" onclick="stepCameraZoom(0.5)" class="w-7 h-7 rounded-lg bg-slate-800 border border-slate-700 text-slate-200 font-bold text-sm flex items-center justify-center active:scale-90">+</button>
+          </div>
+        </div>
+      </div>
+      <div id="qr-reader-file" class="hidden"></div>
+
+      <!-- 两种扫码触发方式 -->
+      <div class="grid grid-cols-2 gap-2.5">
+        <button onclick="toggleCameraScanner()" id="btn-camera" class="py-3 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-indigo-600/30 active:scale-95 transition">
+          <span>🎥 实时取景扫码</span>
+        </button>
+        <label class="py-3 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-600/30 active:scale-95 transition cursor-pointer text-center">
+          <span id="lbl-photo-scan">📸 拍照 / 相册选图快扫</span>
+          <input type="file" accept="image/*" onchange="scanFromImageFile(event)" class="hidden" />
+        </label>
+      </div>
+
+      <!-- 🧪 无课调试演练区（无课堂二维码时，可一键生成标准模拟二维码测试拍照/选图解码与全链路推送） -->
+      <div class="p-3 rounded-xl bg-slate-900/95 border border-indigo-500/30 space-y-2.5">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-indigo-300">🧪 无课调试演练（没课也能测二维码识别与双号全链路）</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300">安全沙箱</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" onclick="toggleSimQrPreview()" class="py-2 px-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-sky-300 text-xs font-medium active:scale-95 transition">
+            🖼️ 显示模拟测试二维码
+          </button>
+          <button type="button" onclick="runSimulatedQrDrill()" class="py-2 px-2.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 text-xs font-semibold active:scale-95 transition">
+            ⚡ 一键模拟扫码演练
+          </button>
+        </div>
+        <div id="sim-qr-box" class="hidden pt-2 border-t border-slate-800 text-center space-y-2">
+          <p class="text-[11px] text-slate-300">👇 长按下方二维码可保存到手机相册，然后点上方【📸 拍照/相册选图快扫】即可实测图片解码与签到全流程：</p>
+          <img id="sim-qr-img" src="" alt="模拟课堂签到二维码" class="w-44 h-44 mx-auto rounded-lg border-4 border-white shadow-md bg-white" />
+          <div class="text-[11px] text-emerald-400 font-mono">模拟活动 ID: 9988776655 (不会向超星发送错误请求)</div>
+        </div>
+      </div>
+
+      <!-- 扫码结果解析回显与手动触发 -->
+      <div class="space-y-2 pt-2 border-t border-slate-800">
+        <label class="text-xs text-slate-400">二维码原文 / URL（扫码后自动填入并触发）：</label>
+        <textarea id="qr-text-input" rows="2" oninput="parseQrInputPreview()" placeholder="https://mobilelearn.chaoxing.com/widget/sign/e?id=xxx&enc=xxx" class="w-full rounded-xl bg-slate-900 border border-slate-700 p-2.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500"></textarea>
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <div class="bg-slate-900/90 px-3 py-1.5 rounded-lg border border-slate-800">
+            <span class="text-slate-400">activeId:</span>
+            <span id="parsed-aid" class="font-mono text-emerald-400 ml-1">未提取</span>
+          </div>
+          <div class="bg-slate-900/90 px-3 py-1.5 rounded-lg border border-slate-800 truncate">
+            <span class="text-slate-400">enc:</span>
+            <span id="parsed-enc" class="font-mono text-amber-400 ml-1">未提取</span>
+          </div>
+        </div>
+
+        <!-- 扫码是否附带位置复选框（后端已支持自动探测老师是否开启二维码定位限制） -->
+        <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 cursor-pointer select-none">
+          <input id="qr-include-location" type="checkbox" class="w-4 h-4 rounded accent-indigo-500" />
+          <span class="text-xs text-slate-200">
+            强制附带位置 <span class="text-emerald-400">（无需手点：老师若开启带位置的二维码签到，程序会自动探测并带上定位！）</span>
+          </span>
+        </label>
+
+        <button onclick="submitSign('qr', ['main', 'sub'], false)" id="btn-submit-qr" class="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold text-sm shadow-lg active:scale-98 transition">
+          🚀 立即执行扫码签到
+        </button>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 2: 手动位置签到 / 手势签到 ==================== -->
+    <section id="tab-loc" class="glass-card rounded-2xl p-4 space-y-4 hidden">
+      <div>
+        <h2 class="text-sm font-bold text-white">手动位置签到 / 手势签到</h2>
+        <p class="text-xs text-slate-400 mt-0.5">若留空活动 ID，后端将自动遍历预设课程嗅探进行中的签到活动</p>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">课程名称（选填，用于 Bark 推送展示）：</label>
+          <input id="manual-course-name" type="text" placeholder="留空则自动匹配课程名" class="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500" />
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">活动 activeId（选填）：</label>
+            <input id="manual-active-id" type="text" placeholder="留空则自动嗅探" class="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-indigo-500" />
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">手势/签到码（选填）：</label>
+            <input id="manual-sign-code" type="text" placeholder="普通位置签可留空" class="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-indigo-500" />
+          </div>
+        </div>
+
+        <button onclick="submitSign('location', ['main', 'sub'], false)" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-sm shadow-lg active:scale-98 transition">
+          📍 触发位置签到
+        </button>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 3: 大小号登录凭证维护 ==================== -->
+    <section id="tab-acc" class="glass-card rounded-2xl p-4 space-y-4 hidden">
+      <div>
+        <h2 class="text-sm font-bold text-white">大小号独立 Session (Cookie) 维护</h2>
+        <p class="text-xs text-slate-400 mt-0.5">每个号永久绑定独立生成的 iPhone deviceCode，自动从 Cookie 提取 UID 与 fid</p>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="text-xs text-slate-400">选择要维护或新增的账号：</label>
+            <button onclick="deleteCurrentSubAccount()" id="btn-delete-sub" class="hidden text-[11px] text-rose-400 hover:underline">🗑 删除该小号</button>
+          </div>
+          <select id="edit-account-key" onchange="onEditAccountSwitch()" class="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-2.5 text-sm text-white">
+            <option value="sub" selected>小号 (托管号)</option>
+            <option value="new">➕ 新增小号 (自动分配独立 iPhone 设备码)</option>
+            <option value="main">大号 (若App自签则无需填写)</option>
+          </select>
+        </div>
+
+        <div class="bg-slate-900/90 p-2.5 rounded-xl border border-slate-800 text-[11px] text-slate-400 space-y-1">
+          <div>绑定机型：<span id="info-device-name" class="text-slate-200 font-medium">--</span></div>
+          <div class="truncate">固定 deviceCode：<span id="info-device-code" class="font-mono text-indigo-300">--</span></div>
+        </div>
+
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">账号备注别名：</label>
+          <input id="edit-account-alias" type="text" placeholder="例如：小号-室友" class="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-xs text-white" />
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="text-xs text-slate-400">支持直接粘贴整段 F12 请求头 / 原始 Cookie（自动清洗提取有效部分）：</label>
+            <button type="button" onclick="pasteAndCleanToTextarea('edit-account-cookie', 'tab-cookie-parse-preview')" class="px-2 py-0.5 rounded bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[11px] active:scale-95">
+              📋 粘贴剪贴板并提取
+            </button>
+          </div>
+          <textarea id="edit-account-cookie" rows="4" oninput="previewSmartClean('edit-account-cookie', 'tab-cookie-parse-preview', false)" placeholder="直接把 Edge/Chrome F12 里整段 Request headers 或 Cookie 粘贴进来即可，程序会自动剔除无关头、合并断行并提取有效部分..." class="w-full rounded-xl bg-slate-900 border border-slate-700 p-2.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500"></textarea>
+          <div id="tab-cookie-parse-preview" class="hidden mt-1.5 p-2 rounded-lg bg-emerald-950/50 border border-emerald-500/30 text-[11px] text-emerald-300 font-mono"></div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" onclick="previewSmartClean('edit-account-cookie', 'tab-cookie-parse-preview', true)" class="py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-sky-300 font-semibold text-xs active:scale-95 transition">
+            🧹 仅清洗填入有效部分
+          </button>
+          <button onclick="saveAccountCookie()" class="py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-lg active:scale-98 transition">
+            💾 自动清洗并保存启用
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 执行回执与细粒度日志面板 -->
+    <section id="result-panel" class="glass-card rounded-2xl p-4 space-y-3 hidden">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider">本次执行回执 (已同步推送至手机 B)</h3>
+        <span id="result-course-badge" class="text-xs text-indigo-300 font-medium"></span>
+      </div>
+      <div id="result-cards" class="space-y-2.5 text-xs"></div>
+    </section>
+
+  </main>
+
+  <!-- ==================== 手机端点击卡片即弹出的【快捷更新 Cookie 弹窗】 ==================== -->
+  <div id="quick-cookie-modal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-700 p-4 space-y-3.5 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+        <div>
+          <h3 class="text-sm font-bold text-white flex items-center gap-1.5">
+            <span>⚡ 快捷更新账号凭证</span>
+            <span id="modal-acc-badge" class="px-2 py-0.5 rounded bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 text-[11px] font-mono">sub</span>
+          </h3>
+          <p class="text-[11px] text-slate-400 mt-0.5">支持直接把 F12 整段 Request headers 复制粘贴进来，自动提取有效部分</p>
+        </div>
+        <button onclick="closeQuickCookieModal()" class="w-7 h-7 rounded-lg bg-slate-800 text-slate-400 hover:text-white text-sm font-bold">✕</button>
+      </div>
+
+      <!-- 模式切换：粘贴 Cookie vs 账号密码免抓包登录 -->
+      <div class="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-slate-950 border border-slate-800 text-xs">
+        <button type="button" id="modal-tab-paste" onclick="switchModalMode('paste')" class="py-1.5 rounded-lg font-semibold bg-indigo-600 text-white">
+          📋 粘贴完整请求头/Cookie
+        </button>
+        <button type="button" id="modal-tab-pwd" onclick="switchModalMode('pwd')" class="py-1.5 rounded-lg font-semibold text-slate-400">
+          📱 账号密码免抓包直登
+        </button>
+      </div>
+
+      <!-- 模式 A：智能粘贴完整 Cookie / F12 请求头 -->
+      <div id="modal-pane-paste" class="space-y-2.5">
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] text-slate-300">粘贴任意包含 Cookie 的文本：</span>
+          <button type="button" onclick="pasteAndCleanToTextarea('modal-cookie-input', 'modal-cookie-preview')" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-medium active:scale-95">
+            📋 一键读取剪贴板并提取
+          </button>
+        </div>
+        <textarea id="modal-cookie-input" rows="5" oninput="previewSmartClean('modal-cookie-input', 'modal-cookie-preview', false)" placeholder="直接粘贴完整 Cookie 或 Edge F12 里的整段 Request headers（含 Accept / Host / Referer 或多行折行均可），系统会自动过滤噪音并填入有效部分..." class="w-full rounded-xl bg-slate-950 border border-slate-700 p-2.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500"></textarea>
+
+        <div id="modal-cookie-preview" class="hidden p-2.5 rounded-xl bg-emerald-950/50 border border-emerald-500/30 text-[11px] text-emerald-300 font-mono space-y-1"></div>
+
+        <div class="grid grid-cols-2 gap-2 pt-1">
+          <button type="button" onclick="previewSmartClean('modal-cookie-input', 'modal-cookie-preview', true)" class="py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-sky-300 font-semibold text-xs active:scale-95">
+            🧹 自动填入有效部分
+          </button>
+          <button type="button" id="btn-modal-save-cookie" onclick="submitModalCookieUpdate()" class="py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold text-xs shadow-lg active:scale-95">
+            💾 立即保存并验证活性
+          </button>
+        </div>
+      </div>
+
+      <!-- 模式 B：无需电脑抓包，直接手机号+密码一键登录提取 Cookie -->
+      <div id="modal-pane-pwd" class="hidden space-y-2.5">
+        <div>
+          <label class="text-[11px] text-slate-400 block mb-1">学习通手机号 / 账号：</label>
+          <input id="modal-login-uname" type="tel" placeholder="请输入超星学习通手机号" class="w-full rounded-xl bg-slate-950 border border-slate-700 px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500" />
+        </div>
+        <div>
+          <label class="text-[11px] text-slate-400 block mb-1">学习通登录密码：</label>
+          <input id="modal-login-pwd" type="password" placeholder="请输入登录密码" class="w-full rounded-xl bg-slate-950 border border-slate-700 px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500" />
+        </div>
+        <button type="button" id="btn-modal-login" onclick="submitModalPasswordLogin()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-xs shadow-lg active:scale-95">
+          🚀 一键登录并自动提取持久化 Cookie
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let appConfig = null;
+    let html5QrCode = null;
+    let isCameraRunning = false;
+    let isSubmittingQr = false;
+    let isQrBoxExpanded = false;
+    let currentCameraZoom = 1.0;
+    let zoomCropTimer = null;
+    let offscreenCropCanvas = null;
+    let nativeBarcodeDetector = null;
+    // 动态二维码(enc)接力模式状态与已消耗的 enc 集合（防止重复提交同一帧过期二维码）
+    let isSubRelayMode = false;
+    let relayPendingAccounts = [];
+    let consumedEncSet = new Set();
+
+    let currentCoord = {
+      location_id: "",
+      latitude: null,
+      longitude: null,
+      address: "",
+      coord_type: "BD09"
+    };
+
+    let currentModalAccountKey = "sub";
+    let activeBackendOrigin = "";
+    let isBackendLiveFrameDecoding = false;
+    let lastBackendFrameDecodeTs = 0;
+
+    // 永久固定入口 & 历史旧网页自动云端寻址引擎：
+    // 无论用户打开的是永久固定入口 https://243243234.github.io/cx-portal/?key=xiaoqi
+    // 还是电脑重启前残留的旧网页，都会自动从 ntfy.sh 与 GitHub Gist 拉取电脑重启后的最新隧道地址并无缝连接！
+    const NTFY_SYNC_TOPIC = "cx_portal_sync_243243234_xiaoqi";
+    const GIST_SYNC_ID = "f493fb3260a5cffc62de9e5bb89be13e";
+
+    function _cleanBaseUrl(u) {
+      if (!u || typeof u !== "string") return "";
+      return u.split("?")[0].replace(/\/$/, "").trim();
+    }
+
+    async function discoverLiveTunnelFromCloud() {
+      const candidates = [];
+      // 1. 从 ntfy.sh 实时同步频道拉取最新一条隧道广播
+      try {
+        const r = await fetch(`https://ntfy.sh/${NTFY_SYNC_TOPIC}/json?poll=1&since=48h`, { cache: "no-store" });
+        if (r.ok) {
+          const t = await r.text();
+          const lines = t.trim().split(/\r?\n/).filter(Boolean);
+          for (let i = lines.length - 1; i >= 0; i--) {
+            try {
+              const evt = JSON.parse(lines[i]);
+              if (evt && evt.message) {
+                const msgObj = JSON.parse(evt.message);
+                const cfBase = _cleanBaseUrl(msgObj.cf_url);
+                const fixBase = _cleanBaseUrl(msgObj.fixed_url);
+                if (cfBase && !candidates.includes(cfBase)) candidates.push(cfBase);
+                if (fixBase && !candidates.includes(fixBase)) candidates.push(fixBase);
+                if (candidates.length > 0) break;
+              }
+            } catch (e) {}
+          }
+        }
+      } catch (e) {}
+
+      // 2. 双保险：从 GitHub Gist API 拉取
+      if (candidates.length === 0) {
+        try {
+          const rg = await fetch(`https://api.github.com/gists/${GIST_SYNC_ID}?t=${Date.now()}`, { cache: "no-store" });
+          if (rg.ok) {
+            const gData = await rg.json();
+            const rawContent = gData && gData.files && gData.files["tunnel.json"] && gData.files["tunnel.json"].content;
+            if (rawContent) {
+              const msgObj = JSON.parse(rawContent);
+              const cfBase = _cleanBaseUrl(msgObj.cf_url);
+              const fixBase = _cleanBaseUrl(msgObj.fixed_url);
+              if (cfBase && !candidates.includes(cfBase)) candidates.push(cfBase);
+              if (fixBase && !candidates.includes(fixBase)) candidates.push(fixBase);
+            }
+          }
+        } catch (e) {}
+      }
+
+      if (candidates.length > 0) {
+        try {
+          localStorage.setItem("cx_last_cf_base", candidates[0]);
+          if (candidates[1]) localStorage.setItem("cx_last_lhr_base", candidates[1]);
+        } catch (e) {}
+      }
+      return candidates;
+    }
+
+    function _isJsonResponse(res) {
+      if (!res) return false;
+      const ct = (res.headers.get("content-type") || "").toLowerCase();
+      return ct.includes("application/json");
+    }
+
+    async function apiFetch(path, options = {}) {
+      const isGithubPages = window.location.hostname.endsWith("github.io");
+
+      // A. 如果已经锁定了可用的后端 Origin（或者当前不在 github.io），优先尝试最快路径
+      if (activeBackendOrigin) {
+        try {
+          const r = await fetch(activeBackendOrigin + path, options);
+          if (_isJsonResponse(r)) return r;
+        } catch (e) {}
+      } else if (!isGithubPages) {
+        try {
+          const primaryRes = await fetch(path, options);
+          if (_isJsonResponse(primaryRes)) {
+            activeBackendOrigin = window.location.origin;
+            return primaryRes;
+          }
+        } catch (e) {}
+      }
+
+      // B. 立即从云端 (ntfy.sh / GitHub Gist) 拉取电脑重启后的最新隧道地址 + 本地缓存候选
+      const backups = [];
+      const cloudUrls = await discoverLiveTunnelFromCloud();
+      for (const cu of cloudUrls) {
+        if (cu && !backups.includes(cu)) backups.push(cu);
+      }
+      if (appConfig) {
+        const cfB = _cleanBaseUrl(appConfig.cf_tunnel_url);
+        const fixB = _cleanBaseUrl(appConfig.fixed_tunnel_url);
+        if (cfB && !backups.includes(cfB)) backups.push(cfB);
+        if (fixB && !backups.includes(fixB)) backups.push(fixB);
+      }
+      try {
+        const savedCf = localStorage.getItem("cx_last_cf_base");
+        const savedLhr = localStorage.getItem("cx_last_lhr_base");
+        if (savedCf && !backups.includes(savedCf)) backups.push(savedCf);
+        if (savedLhr && !backups.includes(savedLhr)) backups.push(savedLhr);
+      } catch (e) {}
+
+      for (const base of backups) {
+        if (!base) continue;
+        try {
+          const fallbackRes = await fetch(base + path, options);
+          if (fallbackRes && _isJsonResponse(fallbackRes)) {
+            activeBackendOrigin = base;
+            return fallbackRes;
+          }
+        } catch (e) {}
+      }
+
+      throw new Error("正在等待电脑端隧道连通，请确认电脑已开机运行脚本，然后直接下拉刷新本页面即可！");
+    }
+
+    function toggleSimQrPreview() {
+      const box = document.getElementById("sim-qr-box");
+      const img = document.getElementById("sim-qr-img");
+      const isHidden = box.classList.contains("hidden");
+      if (isHidden) {
+        const base = activeBackendOrigin || "";
+        img.src = base + "/api/qr/simulate-image?t=" + Date.now();
+        box.classList.remove("hidden");
+      } else {
+        box.classList.add("hidden");
+      }
+    }
+
+    async function runSimulatedQrDrill() {
+      const simUrl = "https://mobilelearn.chaoxing.com/widget/sign/pcStuSignController/signIn?aid=9988776655&source=15&Code=9988776655&enc=a1b2c3d4e5f60718293a4b5c6d7e8f90";
+      document.getElementById("qr-text-input").value = simUrl;
+      parseQrInputPreview();
+      await submitSign("qr", getAllAccountKeys(), false);
+    }
+
+    // 前端毫秒级智能 Cookie 清洗器（与后端 smart_parse_cookie_text 逻辑完全一致）
+    const CORE_COOKIE_KEYS = [
+      "fid", "_uid", "UID", "_d", "vc3", "uf", "cx_p_token", "p_auth_token",
+      "xxtenc", "DSSTASH_LOG", "spaceFid", "spaceFidEnc", "spaceRoleId",
+      "siteRole", "roleEnc", "space_version", "source", "tl", "browserLocale",
+      "fanyamoocs", "jrose"
+    ];
+    const NOISE_COOKIE_KEYS = new Set([
+      "accept", "accept-encoding", "accept-language", "connection", "host",
+      "referer", "sec-ch-ua", "sec-ch-ua-mobile", "sec-ch-ua-platform",
+      "sec-fetch-dest", "sec-fetch-mode", "sec-fetch-site", "user-agent",
+      "upgrade-insecure-requests", "cache-control", "pragma", "origin",
+      "content-type", "content-length", "q", "v", "chapterid", "courseid",
+      "clazzid", "cpi", "mooc2", "hidetype", "fanyaversion", "openc",
+      "writenote", "videojs_id", "jroseupload", "_industry", "k8s", "route"
+    ]);
+
+    function smartCleanCookieFrontend(rawInput) {
+      let text = (rawInput || "").trim();
+      if (!text) return { cleaned: "", uid: "", fid: "", coreKeys: [], droppedKeys: [] };
+
+      const mBlock = text.match(/(?:^|\n)\s*cookie\s*(?::|\r?\n)\s*([\s\S]+?)(?=\r?\n\s*(?:Host|Referer|Sec-Ch-Ua|Sec-Fetch|User-Agent|Origin|Accept|Connection|Cache-Control|Pragma|Upgrade-Insecure-Requests|Content-Type)\b|$)/i);
+      if (mBlock && mBlock[1]) {
+        text = mBlock[1].trim();
+      }
+
+      const stitched = [];
+      for (const rawLine of text.split(/\r?\n/)) {
+        let line = rawLine.trim();
+        if (!line) continue;
+        const low = line.toLowerCase();
+        if (
+          NOISE_COOKIE_KEYS.has(low) ||
+          low.startsWith("accept:") ||
+          low.startsWith("accept-encoding:") ||
+          low.startsWith("accept-language:") ||
+          low.startsWith("connection:") ||
+          low.startsWith("host:") ||
+          low.startsWith("referer:") ||
+          low.startsWith("sec-") ||
+          low.startsWith("user-agent:") ||
+          low.startsWith("http://") ||
+          low.startsWith("https://") ||
+          low.startsWith("mozilla/5.0") ||
+          low.startsWith('"not:a-brand"') ||
+          low.startsWith("gzip,") ||
+          low === "keep-alive" ||
+          low === "*/*"
+        ) {
+          continue;
+        }
+        if (low.startsWith("cookie:")) line = line.slice(7).trim();
+        else if (low === "cookie") continue;
+
+        if (stitched.length === 0) {
+          stitched.push(line);
+        } else {
+          const prev = stitched[stitched.length - 1];
+          const isNewKv = /^[a-zA-Z0-9_]{1,32}=/.test(line);
+          if (!prev.endsWith(";") && !isNewKv) {
+            stitched[stitched.length - 1] = prev + line;
+          } else {
+            stitched.push(line);
+          }
+        }
+      }
+
+      const merged = stitched.join(" ");
+      const jar = {};
+      const droppedKeys = [];
+      for (const seg of merged.split(";")) {
+        const s = seg.trim();
+        if (!s || !s.includes("=")) continue;
+        const eqIdx = s.indexOf("=");
+        let k = s.slice(0, eqIdx).trim();
+        let v = s.slice(eqIdx + 1).trim().replace(/^['"]|['"]$/g, "");
+        if (!k || !v) continue;
+        const mKey = k.match(/([a-zA-Z0-9_]+)$/);
+        if (!mKey) continue;
+        k = mKey[1];
+        const kLow = k.toLowerCase();
+        if (NOISE_COOKIE_KEYS.has(kLow) || /^\d{5,}(?:cpi|ut|t|enc)$/i.test(k)) {
+          droppedKeys.push(k);
+          continue;
+        }
+        if (/\s/.test(v)) continue;
+        jar[k] = v;
+      }
+
+      let uidVal = jar["UID"] || jar["_uid"] || "";
+      if (!uidVal && jar["DSSTASH_LOG"]) {
+        const mDs = jar["DSSTASH_LOG"].match(/US_(\d+)/);
+        if (mDs) uidVal = mDs[1];
+      }
+      if (uidVal) {
+        jar["UID"] = uidVal;
+        jar["_uid"] = uidVal;
+      }
+      const fidVal = jar["fid"] || jar["spaceFid"] || "";
+      if (fidVal && !jar["fid"]) jar["fid"] = fidVal;
+
+      const ordered = [];
+      const coreKeys = [];
+      const used = new Set();
+      for (const ck of CORE_COOKIE_KEYS) {
+        if (jar[ck]) {
+          ordered.push(`${ck}=${jar[ck]}`);
+          coreKeys.push(ck);
+          used.add(ck);
+        }
+      }
+      for (const [k, v] of Object.entries(jar)) {
+        if (!used.has(k)) ordered.push(`${k}=${v}`);
+      }
+      return {
+        cleaned: ordered.join("; "),
+        uid: uidVal,
+        fid: fidVal,
+        coreKeys,
+        droppedKeys
+      };
+    }
+
+    function previewSmartClean(textareaId, previewId, replaceInput = false) {
+      const el = document.getElementById(textareaId);
+      const prevEl = document.getElementById(previewId);
+      if (!el || !prevEl) return null;
+      const raw = el.value;
+      if (!raw.trim()) {
+        prevEl.classList.add("hidden");
+        return null;
+      }
+      const res = smartCleanCookieFrontend(raw);
+      if (replaceInput && res.cleaned) {
+        el.value = res.cleaned;
+      }
+      prevEl.classList.remove("hidden");
+      if (res.coreKeys.length > 0) {
+        const droppedMsg = res.droppedKeys.length > 0
+          ? ` | 🧹 已自动剔除 ${res.droppedKeys.length} 个无关项 (${res.droppedKeys.slice(0, 4).join(", ")})`
+          : "";
+        prevEl.innerHTML = `✅ 已提取有效字段: <b>UID=${res.uid || "未知"}</b>, <b>fid=${res.fid || "未知"}</b>, 核心项 [${res.coreKeys.join(", ")}]${droppedMsg}`;
+      } else {
+        prevEl.innerHTML = `⚠️ 未检测到标准 uf / vc3 / UID 字段，保存时后端将再次深度解析`;
+      }
+      return res;
+    }
+
+    async function pasteAndCleanToTextarea(textareaId, previewId) {
+      const el = document.getElementById(textareaId);
+      try {
+        if (navigator.clipboard && navigator.clipboard.readText) {
+          const clipText = await navigator.clipboard.readText();
+          if (clipText && clipText.trim()) {
+            el.value = clipText;
+          }
+        }
+      } catch (e) {}
+      if (!el.value.trim()) {
+        alert("请长按输入框直接粘贴复制好的 Cookie 或 F12 请求头文本！");
+        el.focus();
+        return;
+      }
+      previewSmartClean(textareaId, previewId, true);
+    }
+
+    function openQuickCookieModal(accountKey = "sub") {
+      currentModalAccountKey = accountKey || "sub";
+      const acc = (appConfig && appConfig.accounts && appConfig.accounts[currentModalAccountKey]) || {};
+      document.getElementById("modal-acc-badge").textContent = `${acc.alias || currentModalAccountKey} (${currentModalAccountKey})`;
+      document.getElementById("modal-cookie-input").value = "";
+      document.getElementById("modal-cookie-preview").classList.add("hidden");
+      switchModalMode("paste");
+      document.getElementById("quick-cookie-modal").classList.remove("hidden");
+    }
+
+    function closeQuickCookieModal() {
+      document.getElementById("quick-cookie-modal").classList.add("hidden");
+    }
+
+    function switchModalMode(mode) {
+      const isPaste = mode === "paste";
+      document.getElementById("modal-pane-paste").classList.toggle("hidden", !isPaste);
+      document.getElementById("modal-pane-pwd").classList.toggle("hidden", isPaste);
+      document.getElementById("modal-tab-paste").className = isPaste
+        ? "py-1.5 rounded-lg font-semibold bg-indigo-600 text-white"
+        : "py-1.5 rounded-lg font-semibold text-slate-400";
+      document.getElementById("modal-tab-pwd").className = !isPaste
+        ? "py-1.5 rounded-lg font-semibold bg-emerald-600 text-white"
+        : "py-1.5 rounded-lg font-semibold text-slate-400";
+    }
+
+    async function submitModalCookieUpdate() {
+      const parsed = previewSmartClean("modal-cookie-input", "modal-cookie-preview", true);
+      const cookies = (parsed && parsed.cleaned) || document.getElementById("modal-cookie-input").value.trim();
+      if (!cookies) {
+        alert("请先粘贴完整的 Cookie 或 F12 请求头文本！");
+        return;
+      }
+      const btn = document.getElementById("btn-modal-save-cookie");
+      const orig = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = "⏳ 正在清洗并验证活性...";
+      try {
+        const res = await apiFetch("/api/accounts/update", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            account_key: currentModalAccountKey,
+            cookies,
+            enabled: true
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "更新失败");
+        closeQuickCookieModal();
+        await loadPanelConfig();
+        await checkHealth(false);
+        alert(`✅ 凭证智能提取并更新成功！\n绑定 UID: ${data.uid}\n活性检测: ${data.detail}`);
+      } catch (e) {
+        alert("更新失败: " + e.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = orig;
+      }
+    }
+
+    async function submitModalPasswordLogin() {
+      const uname = document.getElementById("modal-login-uname").value.trim();
+      const password = document.getElementById("modal-login-pwd").value.trim();
+      if (!uname || !password) {
+        alert("请输入超星学习通手机号与登录密码！");
+        return;
+      }
+      const btn = document.getElementById("btn-modal-login");
+      const orig = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = "⏳ 正在直登超星提取 Cookie...";
+      try {
+        const res = await apiFetch("/api/accounts/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            account_key: currentModalAccountKey,
+            uname,
+            password
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "登录失败");
+        closeQuickCookieModal();
+        await loadPanelConfig();
+        await checkHealth(false);
+        alert(`✅ 账号密码直登成功！\n已自动提取完整 Cookie 并持久化保存\n当前状态: ${data.detail}`);
+      } catch (e) {
+        alert("登录失败: " + e.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = orig;
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", async () => {
+      if ("BarcodeDetector" in window) {
+        try {
+          nativeBarcodeDetector = new BarcodeDetector({ formats: ["qr_code"] });
+        } catch (e) {}
+      }
+      _bindQrTouchZoomGestures();
+      await loadPanelConfig();
+      await checkHealth(false);
+      autoSilentFetchGPS();
+
+      // 若从 Bark 掉线告警通知点击进入（带 ?quick_cookie=sub），自动弹出快捷换 Cookie 窗口！
+      const params = new URLSearchParams(window.location.search);
+      const quickAcc = params.get("quick_cookie");
+      if (quickAcc) {
+        openQuickCookieModal(quickAcc);
+      }
+    });
+
+    function autoSilentFetchGPS() {
+      if (!navigator.geolocation) return;
+      const btn = document.getElementById("btn-gps");
+      btn.textContent = "⏳ 自动定位中...";
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
+          currentCoord = {
+            location_id: "",
+            latitude: lat,
+            longitude: lon,
+            address: document.getElementById("custom-address").value || "课堂实时定位位置",
+            coord_type: "WGS84"
+          };
+          document.getElementById("disp-lat").textContent = lat.toFixed(6) + " (实时GPS)";
+          document.getElementById("disp-lon").textContent = lon.toFixed(6) + " (实时GPS)";
+          btn.textContent = "✅ 已自动锁定GPS";
+        },
+        () => {
+          btn.textContent = "🎯 获取当前 GPS (当前用预设池兜底)";
+        },
+        { enableHighAccuracy: true, timeout: 5000, maximumAge: 60000 }
+      );
+    }
+
+    function switchTab(tabId) {
+      ["tab-qr", "tab-loc", "tab-acc"].forEach(id => {
+        document.getElementById(id).classList.toggle("hidden", id !== tabId);
+      });
+      const map = { "tab-qr": "tab-btn-qr", "tab-loc": "tab-btn-loc", "tab-acc": "tab-btn-acc" };
+      Object.entries(map).forEach(([pane, btn]) => {
+        const el = document.getElementById(btn);
+        if (pane === tabId) {
+          el.className = "py-2 rounded-lg text-xs font-semibold bg-indigo-600 text-white transition";
+        } else {
+          el.className = "py-2 rounded-lg text-xs font-semibold text-slate-400 transition";
+        }
+      });
+      document.getElementById("coord-selector-card").classList.toggle("hidden", tabId === "tab-acc");
+    }
+
+    function getAllAccountKeys() {
+      if (!appConfig || !appConfig.accounts) return ["main", "sub"];
+      const keys = Object.keys(appConfig.accounts);
+      return ["main", ...keys.filter(k => k !== "main")];
+    }
+
+    function getAllSubAccountKeys() {
+      if (!appConfig || !appConfig.accounts) return ["sub"];
+      return Object.keys(appConfig.accounts).filter(k => k !== "main");
+    }
+
+    async function loadPanelConfig() {
+      try {
+        const res = await apiFetch("/api/config");
+        appConfig = await res.json();
+
+        const displayTunnelUrl = appConfig.cf_tunnel_url || appConfig.fixed_tunnel_url || appConfig.public_tunnel_url;
+        if (displayTunnelUrl) {
+          document.getElementById("tunnel-status-bar").textContent = "📌 常驻入口: " + displayTunnelUrl;
+        }
+        try {
+          if (appConfig.cf_tunnel_url) localStorage.setItem("cx_last_cf_base", appConfig.cf_tunnel_url.split("?")[0].replace(/\/$/, ""));
+          if (appConfig.fixed_tunnel_url) localStorage.setItem("cx_last_lhr_base", appConfig.fixed_tunnel_url.split("?")[0].replace(/\/$/, ""));
+        } catch (e) {}
+
+        // 渲染顶部双通道一键切换条（手机开关 VPN 时可一键秒切）
+        const dualBar = document.getElementById("dual-channel-bar");
+        const linkFixed = document.getElementById("link-fixed-tunnel");
+        const linkCf = document.getElementById("link-cf-tunnel");
+        if (appConfig.fixed_tunnel_url || appConfig.cf_tunnel_url) {
+          dualBar.classList.remove("hidden");
+          if (appConfig.cf_tunnel_url) {
+            linkFixed.href = appConfig.cf_tunnel_url;
+            linkFixed.textContent = "📌 主通道(CF)";
+            linkFixed.classList.remove("hidden");
+          } else {
+            linkFixed.classList.add("hidden");
+          }
+          if (appConfig.fixed_tunnel_url) {
+            linkCf.href = appConfig.fixed_tunnel_url;
+            linkCf.textContent = "⚡ 备用直连";
+            linkCf.classList.remove("hidden");
+          } else {
+            linkCf.classList.add("hidden");
+          }
+        }
+
+        const sel = document.getElementById("preset-location-select");
+        sel.innerHTML = "";
+        (appConfig.preset_locations || []).forEach((loc, idx) => {
+          const opt = document.createElement("option");
+          opt.value = loc.id;
+          opt.textContent = `${loc.name} (${loc.longitude}, ${loc.latitude})`;
+          if (idx === 0) opt.selected = true;
+          sel.appendChild(opt);
+        });
+
+        // 动态渲染所有账号（支持无限扩展多个小号 sub, sub2, sub3...）
+        const accSel = document.getElementById("edit-account-key");
+        const prevVal = accSel.value;
+        accSel.innerHTML = "";
+        const subKeys = getAllSubAccountKeys();
+        subKeys.forEach((k, idx) => {
+          const acc = appConfig.accounts[k];
+          const opt = document.createElement("option");
+          opt.value = k;
+          opt.textContent = `${acc.alias || acc.role} (${k}) - #${acc.fingerprint_tail || ""}`;
+          if (idx === 0) opt.selected = true;
+          accSel.appendChild(opt);
+        });
+        const newOpt = document.createElement("option");
+        newOpt.value = "new";
+        newOpt.textContent = "➕ 新增小号 (自动分配独立 iPhone 设备码)";
+        accSel.appendChild(newOpt);
+
+        if (appConfig.accounts["main"]) {
+          const mainOpt = document.createElement("option");
+          mainOpt.value = "main";
+          mainOpt.textContent = "大号 (若App自签则无需填写)";
+          accSel.appendChild(mainOpt);
+        }
+        if (prevVal && prevVal !== "new" && appConfig.accounts[prevVal]) {
+          accSel.value = prevVal;
+        }
+
+        onPresetLocationChange();
+        onEditAccountSwitch();
+      } catch (e) {
+        alert("加载后端配置失败: " + e.message);
+      }
+    }
+
+    function onPresetLocationChange() {
+      if (!appConfig) return;
+      const locId = document.getElementById("preset-location-select").value;
+      const loc = (appConfig.preset_locations || []).find(item => item.id === locId);
+      if (loc) {
+        document.getElementById("custom-address").value = loc.address;
+        if (currentCoord.coord_type !== "WGS84") {
+          currentCoord = {
+            location_id: loc.id,
+            latitude: loc.latitude,
+            longitude: loc.longitude,
+            address: loc.address,
+            coord_type: "BD09"
+          };
+          document.getElementById("disp-lat").textContent = loc.latitude.toFixed(6);
+          document.getElementById("disp-lon").textContent = loc.longitude.toFixed(6);
+        } else {
+          currentCoord.address = loc.address;
+        }
+      }
+    }
+
+    async function saveCustomAddressToConfig() {
+      const addr = document.getElementById("custom-address").value.trim();
+      const locId = document.getElementById("preset-location-select").value;
+      if (!addr) {
+        alert("请先输入中文地址文本！");
+        return;
+      }
+      try {
+        const res = await apiFetch("/api/locations/update", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ location_id: locId || null, address: addr })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "保存失败");
+        currentCoord.address = addr;
+        await loadPanelConfig();
+        document.getElementById("custom-address").value = addr;
+        alert("✅ 已将该中文地址持久化保存到 config.json！");
+      } catch (e) {
+        alert("保存地址失败: " + e.message);
+      }
+    }
+
+    function fetchBrowserGPS() {
+      const btn = document.getElementById("btn-gps");
+      if (!navigator.geolocation) {
+        alert("当前浏览器不支持地理定位，请直接使用预设教学楼坐标池");
+        return;
+      }
+      btn.textContent = "⏳ 定位中...";
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
+          currentCoord = {
+            location_id: "",
+            latitude: lat,
+            longitude: lon,
+            address: document.getElementById("custom-address").value || "手机A实时GPS位置",
+            coord_type: "WGS84"
+          };
+          document.getElementById("disp-lat").textContent = lat.toFixed(6) + " (实时GPS)";
+          document.getElementById("disp-lon").textContent = lon.toFixed(6) + " (实时GPS)";
+          btn.textContent = "✅ 已获取实时GPS";
+        },
+        err => {
+          btn.textContent = "🎯 获取当前 GPS";
+          alert("获取手机 GPS 失败 (" + err.message + ")，已保持使用预设教学楼坐标池");
+        },
+        { enableHighAccuracy: true, timeout: 6000 }
+      );
+    }
+
+    async function checkHealth(notifyOnFail = true) {
+      const btn = document.getElementById("btn-health");
+      btn.textContent = "⏳ 巡检中...";
+      try {
+        const res = await apiFetch(`/api/accounts/health?notify_on_fail=${notifyOnFail}`);
+        const data = await res.json();
+        const container = document.getElementById("account-badges");
+        container.innerHTML = "";
+        Object.keys(data.accounts || {}).forEach(k => {
+          const item = data.accounts[k];
+          if (!item) return;
+          const badgeColor = item.alive
+            ? "text-emerald-400 border-emerald-500/30 bg-emerald-950/30"
+            : "text-rose-400 border-rose-500/40 bg-rose-950/40";
+          const dot = item.alive ? "🟢" : "🔴";
+          container.innerHTML += `
+            <div onclick="openQuickCookieModal('${k}')" class="p-2.5 rounded-xl border ${badgeColor} cursor-pointer active:scale-95 transition">
+              <div class="flex items-center justify-between text-[10px] opacity-85">
+                <span class="truncate">${item.device_name || item.role}</span>
+                <span class="px-1.5 py-0.2 rounded bg-indigo-500/30 text-indigo-200 font-semibold ml-1 shrink-0">⚡ 换Cookie</span>
+              </div>
+              <div class="text-xs font-bold mt-1 truncate">${dot} ${item.alias}</div>
+              <div class="text-[11px] mt-0.5 truncate opacity-90">${item.detail}</div>
+            </div>
+          `;
+        });
+      } catch (e) {
+        console.error(e);
+      } finally {
+        btn.textContent = "🔄 立即巡检";
+      }
+    }
+
+    function extractEncFromText(raw) {
+      const m = (raw || "").match(/enc=([0-9a-fA-F]{16,64})/i);
+      return m ? m[1] : null;
+    }
+
+    function parseQrInputPreview() {
+      const raw = document.getElementById("qr-text-input").value.trim();
+      const aidMatch = raw.match(/(?:aid|activeId|id)=(\d+)/i);
+      const encVal = extractEncFromText(raw);
+      document.getElementById("parsed-aid").textContent = aidMatch ? aidMatch[1] : "未提取";
+      document.getElementById("parsed-enc").textContent = encVal ? encVal.slice(0, 12) + "..." : "未提取";
+    }
+
+    function setRelayModeUI(active, pendingList = []) {
+      isSubRelayMode = active;
+      relayPendingAccounts = pendingList || [];
+      const banner = document.getElementById("relay-mode-banner");
+      const badge = document.getElementById("scan-mode-badge");
+      if (active) {
+        banner.classList.remove("hidden");
+        badge.textContent = "⚡ 小号接力补签中";
+        badge.className = "px-2 py-0.5 rounded bg-amber-500/30 border border-amber-400 text-amber-200 text-[11px] font-bold";
+      } else {
+        banner.classList.add("hidden");
+        badge.textContent = "标准模式";
+        badge.className = "px-2 py-0.5 rounded bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 text-[11px]";
+      }
+    }
+
+    function toggleExpandQrBox() {
+      const box = document.getElementById("qr-reader");
+      const btn = document.getElementById("btn-expand-box");
+      isQrBoxExpanded = !isQrBoxExpanded;
+      box.classList.toggle("qr-expanded", isQrBoxExpanded);
+      btn.textContent = isQrBoxExpanded ? "🗗 还原取景框" : "⛶ 放大取景框";
+    }
+
+    function stepCameraZoom(delta) {
+      const next = Math.min(5.0, Math.max(1.0, Math.round((currentCameraZoom + delta) * 10) / 10));
+      setCameraZoom(next);
+    }
+
+    async function setCameraZoom(zoomVal) {
+      const z = Math.min(5.0, Math.max(1.0, Number(zoomVal) || 1.0));
+      currentCameraZoom = z;
+
+      const slider = document.getElementById("camera-zoom-slider");
+      if (slider && Math.abs(parseFloat(slider.value) - z) > 0.01) {
+        slider.value = z.toFixed(1);
+      }
+      const label = document.getElementById("zoom-val-label");
+      if (label) {
+        label.textContent = z.toFixed(1) + "x";
+      }
+
+      // 更新快捷按钮高亮
+      document.querySelectorAll(".zoom-preset-btn").forEach(btn => {
+        const bVal = parseFloat(btn.textContent.replace("x", ""));
+        if (Math.abs(bVal - z) < 0.08) {
+          btn.className = "zoom-preset-btn px-2 py-0.5 rounded bg-indigo-600 text-white text-[11px] font-mono";
+        } else {
+          btn.className = "zoom-preset-btn px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[11px] font-mono";
+        }
+      });
+
+      await _applyZoomToActiveVideo(z);
+    }
+
+    async function _applyZoomToActiveVideo(z) {
+      const videoEl = document.querySelector("#qr-reader video");
+      const engineTag = document.getElementById("zoom-engine-tag");
+      if (!videoEl) return;
+
+      let hwAppliedZoom = 1.0;
+      try {
+        const stream = videoEl.srcObject;
+        const track = stream && stream.getVideoTracks ? stream.getVideoTracks()[0] : null;
+        if (track && typeof track.getCapabilities === "function") {
+          const caps = track.getCapabilities() || {};
+          if (caps.zoom && typeof caps.zoom.max === "number" && caps.zoom.max > 1.0) {
+            const minZ = caps.zoom.min || 1.0;
+            const maxZ = caps.zoom.max;
+            hwAppliedZoom = Math.min(maxZ, Math.max(minZ, z));
+            await track.applyConstraints({ advanced: [{ zoom: hwAppliedZoom }] });
+          }
+        }
+      } catch (e) {
+        hwAppliedZoom = 1.0;
+      }
+
+      // 若硬件变焦未覆盖全部倍率（如部分 iOS Safari），使用 CSS 中心放大补足视觉倍率，并由中心高清裁切引擎解码
+      const cssRemainderZoom = Math.max(1.0, z / hwAppliedZoom);
+      videoEl.style.transform = cssRemainderZoom > 1.01 ? `scale(${cssRemainderZoom.toFixed(2)})` : "scale(1)";
+
+      if (engineTag) {
+        if (hwAppliedZoom > 1.05 && cssRemainderZoom <= 1.05) {
+          engineTag.textContent = "(光学/硬件变焦已激活)";
+        } else if (z > 1.05) {
+          engineTag.textContent = "(高清中心裁切增强解码中)";
+        } else {
+          engineTag.textContent = "(支持双指缩放/双击画面)";
+        }
+      }
+    }
+
+    function _bindQrTouchZoomGestures() {
+      const container = document.getElementById("qr-reader");
+      if (!container) return;
+
+      let pinchStartDist = 0;
+      let pinchStartZoom = 1.0;
+      let lastTapTime = 0;
+
+      container.addEventListener("touchstart", e => {
+        if (e.touches.length === 2) {
+          const dx = e.touches[0].clientX - e.touches[1].clientX;
+          const dy = e.touches[0].clientY - e.touches[1].clientY;
+          pinchStartDist = Math.hypot(dx, dy);
+          pinchStartZoom = currentCameraZoom;
+        } else if (e.touches.length === 1) {
+          const now = Date.now();
+          if (now - lastTapTime < 280) {
+            // 双击画面循环切换 1x -> 2x -> 3.5x -> 1x
+            const nextZ = currentCameraZoom < 1.8 ? 2.0 : (currentCameraZoom < 3.0 ? 3.5 : 1.0);
+            setCameraZoom(nextZ);
+            e.preventDefault();
+          }
+          lastTapTime = now;
+        }
+      }, { passive: false });
+
+      container.addEventListener("touchmove", e => {
+        if (e.touches.length === 2 && pinchStartDist > 10) {
+          e.preventDefault();
+          const dx = e.touches[0].clientX - e.touches[1].clientX;
+          const dy = e.touches[0].clientY - e.touches[1].clientY;
+          const dist = Math.hypot(dx, dy);
+          const ratio = dist / pinchStartDist;
+          const targetZ = Math.round(Math.min(5.0, Math.max(1.0, pinchStartZoom * ratio)) * 10) / 10;
+          setCameraZoom(targetZ);
+        }
+      }, { passive: false });
+    }
+
+    async function handleDecodedQrText(decodedText) {
+      if (!decodedText || isSubmittingQr) return;
+      const currentEnc = extractEncFromText(decodedText);
+      // 若当前帧的 enc 已经提交过（尚未刷新下一帧），直接跳过等待大屏刷新
+      if (currentEnc && consumedEncSet.has(currentEnc)) {
+        return;
+      }
+      if (currentEnc) {
+        consumedEncSet.add(currentEnc);
+      }
+
+      document.getElementById("qr-text-input").value = decodedText;
+      parseQrInputPreview();
+
+      // 若当前处于“动态码接力模式”，专门只为未签成功的小号发起极速补签！
+      const targets = isSubRelayMode
+        ? (relayPendingAccounts.length > 0 ? relayPendingAccounts : getAllSubAccountKeys())
+        : getAllAccountKeys();
+      const data = await submitSign("qr", targets, isSubRelayMode);
+
+      if (data && data.need_sub_relay) {
+        // 关键要求 3：检测到小号返回“二维码已过期/失效”，扫码框绝不关闭，自动进入接力模式捕捉下一帧！
+        setRelayModeUI(true, data.relay_pending_accounts || []);
+      } else if (data) {
+        // 签到已完成，安全关闭扫码框
+        await stopCameraScannerCleanly();
+      }
+    }
+
+    function _startZoomCropDecoderLoop() {
+      _stopZoomCropDecoderLoop();
+      if (!offscreenCropCanvas) {
+        offscreenCropCanvas = document.createElement("canvas");
+        offscreenCropCanvas.width = 720;
+        offscreenCropCanvas.height = 720;
+      }
+      const ctx = offscreenCropCanvas.getContext("2d", { willReadFrequently: true });
+      let frameTick = 0;
+
+      zoomCropTimer = setInterval(async () => {
+        if (!isCameraRunning || isSubmittingQr) return;
+        const videoEl = document.querySelector("#qr-reader video");
+        if (!videoEl || videoEl.readyState < 2 || !videoEl.videoWidth || !videoEl.videoHeight) return;
+
+        try {
+          const vw = videoEl.videoWidth;
+          const vh = videoEl.videoHeight;
+          const minDim = Math.min(vw, vh);
+          frameTick = (frameTick + 1) % 3;
+          // 轮流扫描：当前变焦倍率、1.6倍深层中心放大（应对教室后排远摄）、以及全画面
+          const baseZoom = Math.max(1.0, currentCameraZoom);
+          const effectiveZoom = frameTick === 0
+            ? baseZoom
+            : (frameTick === 1 ? Math.min(5.0, baseZoom * 1.6) : 1.0);
+
+          const cropSize = Math.max(120, Math.floor(minDim / effectiveZoom));
+          const sx = Math.floor((vw - cropSize) / 2);
+          const sy = Math.floor((vh - cropSize) / 2);
+
+          ctx.drawImage(videoEl, sx, sy, cropSize, cropSize, 0, 0, 720, 720);
+
+          if (nativeBarcodeDetector) {
+            try {
+              const codes = await nativeBarcodeDetector.detect(offscreenCropCanvas);
+              if (codes && codes.length > 0 && codes[0].rawValue) {
+                await handleDecodedQrText(codes[0].rawValue);
+                return;
+              }
+            } catch (e) {}
+          }
+
+          if (typeof window.jsQR === "function") {
+            const imgData = ctx.getImageData(0, 0, 720, 720);
+            const code = window.jsQR(imgData.data, imgData.width, imgData.height, {
+              inversionAttempts: "attemptBoth"
+            });
+            if (code && code.data) {
+              await handleDecodedQrText(code.data);
+              return;
+            }
+          }
+
+          // 3. 实时视频流后台 C++ 协同超清解码（每 850ms 自动抓取一帧送往电脑端 zxing-cpp + OpenCV 多尺度抗摩尔纹引擎）：
+          // 彻底解决部分同学手机浏览器不支持 BarcodeDetector、校园网大屏摩尔纹/反光导致实时取景框一直扫不出来的问题！
+          const nowMs = Date.now();
+          if (!isBackendLiveFrameDecoding && !isSubmittingQr && (nowMs - lastBackendFrameDecodeTs >= 850)) {
+            isBackendLiveFrameDecoding = true;
+            lastBackendFrameDecodeTs = nowMs;
+            offscreenCropCanvas.toBlob(async blob => {
+              try {
+                if (!blob || !isCameraRunning || isSubmittingQr) return;
+                const fd = new FormData();
+                fd.append("file", blob, "live_frame.jpg");
+                const r = await apiFetch("/api/qr/decode-image", {
+                  method: "POST",
+                  body: fd
+                });
+                if (r && r.ok) {
+                  const d = await r.json();
+                  if (d && d.qr_text && isCameraRunning && !isSubmittingQr) {
+                    await handleDecodedQrText(d.qr_text);
+                  }
+                }
+              } catch (err) {
+              } finally {
+                isBackendLiveFrameDecoding = false;
+              }
+            }, "image/jpeg", 0.85);
+          }
+        } catch (e) {}
+      }, 150);
+    }
+
+    function _stopZoomCropDecoderLoop() {
+      if (zoomCropTimer) {
+        clearInterval(zoomCropTimer);
+        zoomCropTimer = null;
+      }
+    }
+
+    async function stopCameraScannerCleanly() {
+      _stopZoomCropDecoderLoop();
+      if (isCameraRunning && html5QrCode) {
+        try {
+          await html5QrCode.stop();
+        } catch (e) {}
+      }
+      isCameraRunning = false;
+      setRelayModeUI(false, []);
+      document.getElementById("btn-camera").textContent = "🎥 实时取景扫码";
+    }
+
+    async function toggleCameraScanner() {
+      const btn = document.getElementById("btn-camera");
+      if (isCameraRunning) {
+        await stopCameraScannerCleanly();
+        return;
+      }
+      try {
+        if (!html5QrCode) {
+          html5QrCode = new Html5Qrcode("qr-reader");
+        }
+        consumedEncSet.clear();
+        setRelayModeUI(false, []);
+        btn.textContent = "⏹ 停止摄像头";
+        isCameraRunning = true;
+
+        await html5QrCode.start(
+          { facingMode: "environment" },
+          {
+            fps: 15,
+            qrbox: (viewfinderWidth, viewfinderHeight) => {
+              const side = Math.floor(Math.min(viewfinderWidth, viewfinderHeight) * 0.85);
+              return { width: Math.max(200, side), height: Math.max(200, side) };
+            },
+            videoConstraints: {
+              facingMode: "environment",
+              width: { ideal: 1920 },
+              height: { ideal: 1080 }
+            }
+          },
+          async decodedText => {
+            await handleDecodedQrText(decodedText);
+          },
+          () => {}
+        );
+
+        // 启动后立即应用当前设置的变焦倍率并开启中心高清裁切解码循环
+        setTimeout(() => {
+          _applyZoomToActiveVideo(currentCameraZoom);
+          _startZoomCropDecoderLoop();
+        }, 250);
+      } catch (err) {
+        isCameraRunning = false;
+        _stopZoomCropDecoderLoop();
+        btn.textContent = "🎥 实时取景扫码";
+        alert("无法打开实时视频流，请确认使用 https:// 链接访问并允许摄像头权限，或点击右侧【📸 原生相机快扫】！");
+      }
+    }
+
+    function _loadImageElement(file) {
+      return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+        img.onload = () => {
+          URL.revokeObjectURL(url);
+          resolve(img);
+        };
+        img.onerror = err => {
+          URL.revokeObjectURL(url);
+          reject(err);
+        };
+        img.src = url;
+      });
+    }
+
+    async function _decodeFileInBrowserMultiScale(img) {
+      const iw = img.naturalWidth || img.width;
+      const ih = img.naturalHeight || img.height;
+      if (!iw || !ih) return null;
+
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+      const minDim = Math.min(iw, ih);
+
+      // 构造候选裁切区域：全图 + 中心多级缩放 (75%, 52%, 36%, 24%) + 3x3 网格（应对二维码偏离中心）
+      const regions = [
+        { sx: 0, sy: 0, sw: iw, sh: ih, outW: Math.min(1200, iw), outH: Math.min(1200, ih) }
+      ];
+      for (const ratio of [0.75, 0.52, 0.36, 0.24]) {
+        const side = Math.max(120, Math.floor(minDim * ratio));
+        regions.push({
+          sx: Math.floor((iw - side) / 2),
+          sy: Math.floor((ih - side) / 2),
+          sw: side,
+          sh: side,
+          outW: 800,
+          outH: 800
+        });
+      }
+      const winW = Math.floor(iw * 0.48);
+      const winH = Math.floor(ih * 0.48);
+      for (const gy of [0.0, 0.26, 0.52]) {
+        for (const gx of [0.0, 0.26, 0.52]) {
+          regions.push({
+            sx: Math.floor(iw * gx),
+            sy: Math.floor(ih * gy),
+            sw: winW,
+            sh: winH,
+            outW: 720,
+            outH: 720
+          });
+        }
+      }
+
+      for (const reg of regions) {
+        canvas.width = reg.outW;
+        canvas.height = reg.outH;
+        ctx.drawImage(img, reg.sx, reg.sy, reg.sw, reg.sh, 0, 0, reg.outW, reg.outH);
+
+        if (nativeBarcodeDetector) {
+          try {
+            const codes = await nativeBarcodeDetector.detect(canvas);
+            if (codes && codes.length > 0 && codes[0].rawValue) {
+              return codes[0].rawValue.trim();
+            }
+          } catch (e) {}
+        }
+
+        if (typeof window.jsQR === "function") {
+          try {
+            const imgData = ctx.getImageData(0, 0, reg.outW, reg.outH);
+            const code = window.jsQR(imgData.data, imgData.width, imgData.height, {
+              inversionAttempts: "attemptBoth"
+            });
+            if (code && code.data) {
+              return code.data.trim();
+            }
+          } catch (e) {}
+        }
+      }
+      return null;
+    }
+
+    async function _decodeFileViaBackend(file, img) {
+      // 先将高分大图压缩至 2000px 以内上传，既保留二维码细节又确保蜂窝网络 100ms 极速传输
+      let uploadBlob = file;
+      try {
+        if (img) {
+          const iw = img.naturalWidth || img.width;
+          const ih = img.naturalHeight || img.height;
+          const maxSide = 2000;
+          const scale = Math.min(1.0, maxSide / Math.max(iw, ih));
+          const cw = Math.max(1, Math.round(iw * scale));
+          const ch = Math.max(1, Math.round(ih * scale));
+          const c = document.createElement("canvas");
+          c.width = cw;
+          c.height = ch;
+          c.getContext("2d").drawImage(img, 0, 0, cw, ch);
+          const compressed = await new Promise(res => c.toBlob(res, "image/jpeg", 0.92));
+          if (compressed) uploadBlob = compressed;
+        }
+      } catch (e) {}
+
+      const fd = new FormData();
+      fd.append("file", uploadBlob, file.name || "capture.jpg");
+      const res = await apiFetch("/api/qr/decode-image", {
+        method: "POST",
+        body: fd
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.detail || "未能在照片中识别出二维码");
+      }
+      const data = await res.json();
+      return data.qr_text || null;
+    }
+
+    async function scanFromImageFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const lbl = document.getElementById("lbl-photo-scan");
+      const origLbl = lbl ? lbl.textContent : "📸 原生相机快扫";
+      if (lbl) lbl.textContent = "⏳ 超清识别中...";
+
+      try {
+        let img = null;
+        try {
+          img = await _loadImageElement(file);
+        } catch (e) {}
+
+        // 1. 先用前端多尺度中心裁切 + iOS 原生 Vision / jsQR 极速识别
+        let decodedText = img ? await _decodeFileInBrowserMultiScale(img) : null;
+
+        // 2. 若前端未命中（如后排远距离摩尔纹/强反光大屏），立即调用电脑端 C++ zxing-cpp + OpenCV 多尺度抗摩尔纹引擎解码
+        if (!decodedText) {
+          decodedText = await _decodeFileViaBackend(file, img);
+        }
+
+        if (!decodedText) {
+          throw new Error("未能在照片中识别出二维码");
+        }
+
+        document.getElementById("qr-text-input").value = decodedText;
+        parseQrInputPreview();
+        const targets = isSubRelayMode
+          ? (relayPendingAccounts.length > 0 ? relayPendingAccounts : getAllSubAccountKeys())
+          : getAllAccountKeys();
+        const data = await submitSign("qr", targets, isSubRelayMode);
+        if (data && data.need_sub_relay) {
+          setRelayModeUI(true, data.relay_pending_accounts || []);
+          alert("⚡ 检测到上一帧动态码已被消耗/过期！已自动切换为【小号接力补签模式】，请再拍一下刷新后的二维码即可完成剩余小号补签！");
+        } else {
+          setRelayModeUI(false, []);
+        }
+      } catch (err) {
+        alert("未能在照片中识别出二维码，建议拍照时稍微放大画面对准大屏二维码区域重试！");
+      } finally {
+        if (lbl) lbl.textContent = origLbl;
+        event.target.value = "";
+      }
+    }
+
+    async function submitSign(mode, targetAccounts = ["main", "sub"], isRelayRetry = false) {
+      if (isSubmittingQr) return null;
+      isSubmittingQr = true;
+      const btn = document.getElementById("btn-submit-qr");
+      const origText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = isRelayRetry
+        ? "⚡ 捕捉到新动态码！正在为【小号】极速接力补签..."
+        : "⏳ 正在执行独立 Session 签到...";
+
+      const addressVal = document.getElementById("custom-address").value.trim();
+      const includeLocInQr = Boolean(document.getElementById("qr-include-location")?.checked);
+      const payload = {
+        sign_type: mode,
+        qr_text: mode === "qr" ? document.getElementById("qr-text-input").value.trim() : null,
+        active_id: mode !== "qr" ? document.getElementById("manual-active-id").value.trim() || null : null,
+        course_name: mode !== "qr" ? document.getElementById("manual-course-name").value.trim() || null : null,
+        sign_code: mode !== "qr" ? document.getElementById("manual-sign-code").value.trim() || null : null,
+        include_location_in_qr: mode === "qr" ? includeLocInQr : true,
+        location_id: currentCoord.location_id || null,
+        latitude: currentCoord.coord_type === "WGS84" ? currentCoord.latitude : null,
+        longitude: currentCoord.coord_type === "WGS84" ? currentCoord.longitude : null,
+        address: addressVal || currentCoord.address,
+        coord_type: currentCoord.coord_type,
+        target_accounts: targetAccounts,
+        is_relay_retry: isRelayRetry
+      };
+
+      try {
+        const res = await apiFetch("/api/sign", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.detail || "签到请求失败");
+        }
+        renderSignResults(data);
+        return data;
+      } catch (e) {
+        alert("执行异常: " + e.message);
+        return null;
+      } finally {
+        isSubmittingQr = false;
+        btn.disabled = false;
+        btn.textContent = origText;
+      }
+    }
+
+    function renderSignResults(data) {
+      const panel = document.getElementById("result-panel");
+      const cards = document.getElementById("result-cards");
+      document.getElementById("result-course-badge").textContent = `${data.course_name} (#${data.active_id})`;
+      cards.innerHTML = "";
+
+      (data.results || []).forEach(r => {
+        const okStyle = r.success
+          ? "border-emerald-500/40 bg-emerald-950/30"
+          : (r.is_qr_expired ? "border-amber-400/50 bg-amber-950/30" : "border-rose-500/40 bg-rose-950/30");
+        const icon = r.success
+          ? "✅ 签到成功"
+          : (r.is_qr_expired ? "⏳ 二维码过期 (正接力捕捉下一帧)" : "❌ 签到失败");
+        const delayTag = r.stagger_delay_sec > 0 ? `错峰 +${r.stagger_delay_sec}s` : "0s 极速发包";
+
+        cards.innerHTML += `
+          <div class="p-3 rounded-xl border ${okStyle} space-y-1">
+            <div class="flex items-center justify-between font-bold">
+              <span>${r.role_label} · ${r.alias}</span>
+              <span>${icon}</span>
+            </div>
+            <div class="text-slate-300">服务端返回：<code class="px-1.5 py-0.5 rounded bg-slate-900 text-amber-300">${r.raw_response}</code></div>
+            <div class="text-slate-400 flex justify-between">
+              <span>协议耗时: ${r.elapsed_ms}ms (${delayTag})</span>
+              <span>${r.device_name} (#${r.fingerprint_tail})</span>
+            </div>
+            <div class="text-slate-400 font-mono text-[11px]">
+              微扰坐标: (${r.longitude}, ${r.latitude}) | ${r.address}
+            </div>
+          </div>
+        `;
+      });
+      panel.classList.remove("hidden");
+    }
+
+    function onEditAccountSwitch() {
+      if (!appConfig || !appConfig.accounts) return;
+      const key = document.getElementById("edit-account-key").value;
+      const delBtn = document.getElementById("btn-delete-sub");
+      if (key === "new") {
+        delBtn.classList.add("hidden");
+        document.getElementById("edit-account-alias").value = "";
+        document.getElementById("info-device-name").textContent = "保存时将自动分配全新 iPhone 机型与系统版本";
+        document.getElementById("info-device-code").textContent = "保存时将自动生成并永久固定 32 位独立 deviceCode";
+        return;
+      }
+      delBtn.classList.toggle("hidden", key === "main" || key === "sub");
+      const acc = appConfig.accounts[key];
+      if (acc) {
+        document.getElementById("edit-account-alias").value = acc.alias || "";
+        document.getElementById("info-device-name").textContent = acc.device_name || "";
+        document.getElementById("info-device-code").textContent = acc.deviceCode || "";
+      }
+    }
+
+    async function deleteCurrentSubAccount() {
+      const key = document.getElementById("edit-account-key").value;
+      if (key === "main" || key === "sub" || key === "new") return;
+      if (!confirm(`确定要移除账号 [${key}] 吗？`)) return;
+      try {
+        const res = await apiFetch(`/api/accounts/${key}`, { method: "DELETE" });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "删除失败");
+        await loadPanelConfig();
+        await checkHealth(false);
+      } catch (e) {
+        alert("删除失败: " + e.message);
+      }
+    }
+
+    async function saveAccountCookie() {
+      const key = document.getElementById("edit-account-key").value;
+      const alias = document.getElementById("edit-account-alias").value.trim();
+      const parsed = previewSmartClean("edit-account-cookie", "tab-cookie-parse-preview", true);
+      const cookies = (parsed && parsed.cleaned) || document.getElementById("edit-account-cookie").value.trim();
+      if (!cookies) {
+        alert("请先粘贴完整的 Cookie 或 F12 请求头字符串！");
+        return;
+      }
+      try {
+        const res = await apiFetch("/api/accounts/update", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ account_key: key, alias, cookies, enabled: true })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "更新失败");
+        alert(`✅ 智能清洗并更新完成！\n提取核心认证项: ${(data.core_keys || []).length} 个\n实时检测结果: ${data.detail}\n已自动同步通知到手机 B (Bark)`);
+        document.getElementById("edit-account-cookie").value = "";
+        document.getElementById("tab-cookie-parse-preview").classList.add("hidden");
+        await loadPanelConfig();
+        await checkHealth(false);
+      } catch (e) {
+        alert("保存失败: " + e.message);
+      }
+    }
+
+    async function testBarkPush() {
+      try {
+        const res = await apiFetch("/api/bark/test", { method: "POST" });
+        if (!res.ok) throw new Error("Bark 接口返回非 200");
+        alert("✅ 已向手机 B 发送结构化测试推送，请查看手机 B 通知栏！");
+      } catch (e) {
+        alert("Bark 测试失败: " + e.message);
+      }
+    }
+  </script>
+</body>
+</html>
