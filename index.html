@@ -447,7 +447,7 @@
       const candidates = [];
       // 1. 从 ntfy.sh 实时同步频道拉取最新一条隧道广播
       try {
-        const r = await fetch(`https://ntfy.sh/${NTFY_SYNC_TOPIC}/json?poll=1&since=48h`, { cache: "no-store" });
+        const r = await fetch(`https://ntfy.sh/${NTFY_SYNC_TOPIC}/json?poll=1&since=all`, { cache: "no-store" });
         if (r.ok) {
           const t = await r.text();
           const lines = t.trim().split(/\r?\n/).filter(Boolean);
