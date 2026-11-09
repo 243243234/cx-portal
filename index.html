@@ -167,21 +167,21 @@
           点击下方【🎥 实时取景扫码】对准课堂二维码
         </div>
 
-        <!-- 实时取景无级变焦控制栏 (1.0x ~ 5.0x 光学+高清中心裁切双引擎) -->
+        <!-- 实时取景无级变焦控制栏 (1.0x ~ 5.0x 智能自动拉近 + 小码超分直扫双引擎) -->
         <div id="camera-zoom-panel" class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2">
-          <div class="flex items-center justify-between text-xs">
-            <span class="text-slate-300 font-medium">🔍 远距大屏放大倍率：<strong id="zoom-val-label" class="text-amber-300 font-mono">1.0x</strong> <span id="zoom-engine-tag" class="text-[10px] text-slate-400 ml-1">(支持双指缩放/双击画面)</span></span>
+          <div class="flex items-center justify-between text-xs flex-wrap gap-1">
+            <span class="text-slate-300 font-medium">🔍 放大倍率：<strong id="zoom-val-label" class="text-amber-300 font-mono">1.0x</strong> <span id="zoom-engine-tag" class="text-[10px] text-emerald-400 ml-1">(小码超分直扫+自动拉近已就绪)</span></span>
             <div class="flex items-center gap-1">
-              <button type="button" onclick="setCameraZoom(1.0)" class="zoom-preset-btn px-2 py-0.5 rounded bg-indigo-600 text-white text-[11px] font-mono">1x</button>
-              <button type="button" onclick="setCameraZoom(1.5)" class="zoom-preset-btn px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[11px] font-mono">1.5x</button>
-              <button type="button" onclick="setCameraZoom(2.0)" class="zoom-preset-btn px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[11px] font-mono">2x</button>
-              <button type="button" onclick="setCameraZoom(3.0)" class="zoom-preset-btn px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[11px] font-mono">3x</button>
-              <button type="button" onclick="setCameraZoom(5.0)" class="zoom-preset-btn px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[11px] font-mono">5x</button>
+              <button type="button" id="btn-auto-zoom" onclick="toggleAutoZoomMode()" class="px-2 py-0.5 rounded bg-emerald-600 text-white text-[11px] font-semibold shadow-sm active:scale-95">🤖 自动拉近:开</button>
+              <button type="button" onclick="setCameraZoom(1.0, true)" class="zoom-preset-btn px-1.5 py-0.5 rounded bg-indigo-600 text-white text-[11px] font-mono">1x</button>
+              <button type="button" onclick="setCameraZoom(1.8, true)" class="zoom-preset-btn px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 text-[11px] font-mono">1.8x</button>
+              <button type="button" onclick="setCameraZoom(2.6, true)" class="zoom-preset-btn px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 text-[11px] font-mono">2.6x</button>
+              <button type="button" onclick="setCameraZoom(3.8, true)" class="zoom-preset-btn px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 text-[11px] font-mono">3.8x</button>
             </div>
           </div>
           <div class="flex items-center gap-2">
             <button type="button" onclick="stepCameraZoom(-0.5)" class="w-7 h-7 rounded-lg bg-slate-800 border border-slate-700 text-slate-200 font-bold text-sm flex items-center justify-center active:scale-90">−</button>
-            <input id="camera-zoom-slider" type="range" min="1.0" max="5.0" step="0.1" value="1.0" oninput="setCameraZoom(parseFloat(this.value))" class="w-full accent-indigo-500 h-1.5 bg-slate-800 rounded-lg cursor-pointer" />
+            <input id="camera-zoom-slider" type="range" min="1.0" max="5.0" step="0.1" value="1.0" oninput="setCameraZoom(parseFloat(this.value), true)" class="w-full accent-indigo-500 h-1.5 bg-slate-800 rounded-lg cursor-pointer" />
             <button type="button" onclick="stepCameraZoom(0.5)" class="w-7 h-7 rounded-lg bg-slate-800 border border-slate-700 text-slate-200 font-bold text-sm flex items-center justify-center active:scale-90">+</button>
           </div>
         </div>
@@ -411,8 +411,14 @@
     let isSubmittingQr = false;
     let isQrBoxExpanded = false;
     let currentCameraZoom = 1.0;
+    let isAutoZoomEnabled = true;
+    let lastManualZoomTs = 0;
+    let lastAutoZoomStepTs = 0;
+    let autoZoomCruiseIndex = 0;
     let zoomCropTimer = null;
     let offscreenCropCanvas = null;
+    let backendFrameCanvas = null;
+    let roiDetectCanvas = null;
     let nativeBarcodeDetector = null;
     // 动态二维码(enc)接力模式状态与已消耗的 enc 集合（防止重复提交同一帧过期二维码）
     let isSubRelayMode = false;
@@ -1133,12 +1139,29 @@
       btn.textContent = isQrBoxExpanded ? "🗗 还原取景框" : "⛶ 放大取景框";
     }
 
-    function stepCameraZoom(delta) {
-      const next = Math.min(5.0, Math.max(1.0, Math.round((currentCameraZoom + delta) * 10) / 10));
-      setCameraZoom(next);
+    function toggleAutoZoomMode() {
+      isAutoZoomEnabled = !isAutoZoomEnabled;
+      const btn = document.getElementById("btn-auto-zoom");
+      if (btn) {
+        if (isAutoZoomEnabled) {
+          btn.textContent = "🤖 自动拉近:开";
+          btn.className = "px-2 py-0.5 rounded bg-emerald-600 text-white text-[11px] font-semibold shadow-sm active:scale-95";
+        } else {
+          btn.textContent = "🤖 自动拉近:关";
+          btn.className = "px-2 py-0.5 rounded bg-slate-800 text-slate-400 text-[11px] font-semibold active:scale-95";
+        }
+      }
     }
 
-    async function setCameraZoom(zoomVal) {
+    function stepCameraZoom(delta) {
+      const next = Math.min(5.0, Math.max(1.0, Math.round((currentCameraZoom + delta) * 10) / 10));
+      setCameraZoom(next, true);
+    }
+
+    async function setCameraZoom(zoomVal, isManual = false) {
+      if (isManual) {
+        lastManualZoomTs = Date.now();
+      }
       const z = Math.min(5.0, Math.max(1.0, Number(zoomVal) || 1.0));
       currentCameraZoom = z;
 
@@ -1155,9 +1178,9 @@
       document.querySelectorAll(".zoom-preset-btn").forEach(btn => {
         const bVal = parseFloat(btn.textContent.replace("x", ""));
         if (Math.abs(bVal - z) < 0.08) {
-          btn.className = "zoom-preset-btn px-2 py-0.5 rounded bg-indigo-600 text-white text-[11px] font-mono";
+          btn.className = "zoom-preset-btn px-1.5 py-0.5 rounded bg-indigo-600 text-white text-[11px] font-mono";
         } else {
-          btn.className = "zoom-preset-btn px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[11px] font-mono";
+          btn.className = "zoom-preset-btn px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 text-[11px] font-mono";
         }
       });
 
@@ -1192,11 +1215,11 @@
 
       if (engineTag) {
         if (hwAppliedZoom > 1.05 && cssRemainderZoom <= 1.05) {
-          engineTag.textContent = "(光学/硬件变焦已激活)";
+          engineTag.textContent = `(光学变焦 ${z.toFixed(1)}x + 小码超分直扫中)`;
         } else if (z > 1.05) {
-          engineTag.textContent = "(高清中心裁切增强解码中)";
+          engineTag.textContent = `(智能拉近 ${z.toFixed(1)}x + 8级金字塔小码直扫中)`;
         } else {
-          engineTag.textContent = "(支持双指缩放/双击画面)";
+          engineTag.textContent = "(小码无需手拉即可直扫 · 自动拉近守护中)";
         }
       }
     }
@@ -1220,7 +1243,7 @@
           if (now - lastTapTime < 280) {
             // 双击画面循环切换 1x -> 2x -> 3.5x -> 1x
             const nextZ = currentCameraZoom < 1.8 ? 2.0 : (currentCameraZoom < 3.0 ? 3.5 : 1.0);
-            setCameraZoom(nextZ);
+            setCameraZoom(nextZ, true);
             e.preventDefault();
           }
           lastTapTime = now;
@@ -1235,7 +1258,7 @@
           const dist = Math.hypot(dx, dy);
           const ratio = dist / pinchStartDist;
           const targetZ = Math.round(Math.min(5.0, Math.max(1.0, pinchStartZoom * ratio)) * 10) / 10;
-          setCameraZoom(targetZ);
+          setCameraZoom(targetZ, true);
         }
       }, { passive: false });
     }
@@ -1269,15 +1292,114 @@
       }
     }
 
+    // 快速在实时视频帧中定位小型高对比度二维码候选块（计算小二维码占比并自动抠图/自动拉近到最佳尺寸）
+    function _detectSmallQrCandidateInVideo(videoEl) {
+      try {
+        if (!roiDetectCanvas) {
+          roiDetectCanvas = document.createElement("canvas");
+          roiDetectCanvas.width = 240;
+          roiDetectCanvas.height = 240;
+        }
+        const vw = videoEl.videoWidth;
+        const vh = videoEl.videoHeight;
+        const minDim = Math.min(vw, vh);
+        const sx0 = Math.floor((vw - minDim) / 2);
+        const sy0 = Math.floor((vh - minDim) / 2);
+        const rCtx = roiDetectCanvas.getContext("2d", { willReadFrequently: true });
+        rCtx.drawImage(videoEl, sx0, sy0, minDim, minDim, 0, 0, 240, 240);
+        const data = rCtx.getImageData(0, 0, 240, 240).data;
+
+        // 统计 15x15 网格块的高频黑白跳变密度（二维码回字定位符与模块特征）
+        const gridN = 15;
+        const cell = 16; // 240 / 15
+        let maxDensity = 0;
+        let bestGx = 7;
+        let bestGy = 7;
+        const densities = new Float32Array(gridN * gridN);
+
+        for (let gy = 1; gy < gridN - 1; gy++) {
+          for (let gx = 1; gx < gridN - 1; gx++) {
+            let edgeSum = 0;
+            const yStart = gy * cell;
+            const xStart = gx * cell;
+            for (let y = yStart; y < yStart + cell; y += 2) {
+              const rowOff = y * 240;
+              for (let x = xStart; x < xStart + cell - 2; x += 2) {
+                const idx = (rowOff + x) * 4;
+                const idxNext = idx + 8;
+                const idxDown = idx + 240 * 4 * 2;
+                const luma = data[idx] * 0.3 + data[idx + 1] * 0.59 + data[idx + 2] * 0.11;
+                const lumaR = data[idxNext] * 0.3 + data[idxNext + 1] * 0.59 + data[idxNext + 2] * 0.11;
+                const lumaD = data[idxDown] * 0.3 + data[idxDown + 1] * 0.59 + data[idxDown + 2] * 0.11;
+                if (Math.abs(luma - lumaR) > 38) edgeSum++;
+                if (Math.abs(luma - lumaD) > 38) edgeSum++;
+              }
+            }
+            // 中心权重加成
+            const distC = Math.hypot(gx - 7, gy - 7);
+            const score = edgeSum * (1.15 - distC * 0.04);
+            densities[gy * gridN + gx] = score;
+            if (score > maxDensity) {
+              maxDensity = score;
+              bestGx = gx;
+              bestGy = gy;
+            }
+          }
+        }
+
+        if (maxDensity < 18) return null;
+        const thresh = maxDensity * 0.48;
+        let minGx = bestGx, maxGx = bestGx, minGy = bestGy, maxGy = bestGy;
+        for (let gy = Math.max(1, bestGy - 4); gy <= Math.min(gridN - 2, bestGy + 4); gy++) {
+          for (let gx = Math.max(1, bestGx - 4); gx <= Math.min(gridN - 2, bestGx + 4); gx++) {
+            if (densities[gy * gridN + gx] >= thresh) {
+              if (gx < minGx) minGx = gx;
+              if (gx > maxGx) maxGx = gx;
+              if (gy < minGy) minGy = gy;
+              if (gy > maxGy) maxGy = gy;
+            }
+          }
+        }
+        const spanCells = Math.max(2, Math.max(maxGx - minGx + 1, maxGy - minGy + 1));
+        const qrRatio = Math.min(0.85, Math.max(0.12, (spanCells * cell) / 240.0));
+        const cxNorm = ((minGx + maxGx + 1) * 0.5) / gridN;
+        const cyNorm = ((minGy + maxGy + 1) * 0.5) / gridN;
+        const padSide = Math.floor(minDim * Math.min(0.9, qrRatio * 1.65));
+        const cxPx = sx0 + Math.floor(cxNorm * minDim);
+        const cyPx = sy0 + Math.floor(cyNorm * minDim);
+        const cropX = Math.max(0, Math.min(vw - padSide, Math.floor(cxPx - padSide / 2)));
+        const cropY = Math.max(0, Math.min(vh - padSide, Math.floor(cyPx - padSide / 2)));
+        return {
+          sx: cropX,
+          sy: cropY,
+          side: Math.max(96, padSide),
+          qrRatio
+        };
+      } catch (e) {
+        return null;
+      }
+    }
+
     function _startZoomCropDecoderLoop() {
       _stopZoomCropDecoderLoop();
       if (!offscreenCropCanvas) {
         offscreenCropCanvas = document.createElement("canvas");
-        offscreenCropCanvas.width = 720;
-        offscreenCropCanvas.height = 720;
       }
+      offscreenCropCanvas.width = 960;
+      offscreenCropCanvas.height = 960;
       const ctx = offscreenCropCanvas.getContext("2d", { willReadFrequently: true });
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+
+      if (!backendFrameCanvas) {
+        backendFrameCanvas = document.createElement("canvas");
+        backendFrameCanvas.width = 1280;
+        backendFrameCanvas.height = 1280;
+      }
+      const bCtx = backendFrameCanvas.getContext("2d", { willReadFrequently: true });
+
       let frameTick = 0;
+      const cruiseZoomSteps = [1.5, 2.2, 3.0, 3.8, 1.8, 2.6];
 
       zoomCropTimer = setInterval(async () => {
         if (!isCameraRunning || isSubmittingQr) return;
@@ -1288,18 +1410,60 @@
           const vw = videoEl.videoWidth;
           const vh = videoEl.videoHeight;
           const minDim = Math.min(vw, vh);
-          frameTick = (frameTick + 1) % 3;
-          // 轮流扫描：当前变焦倍率、1.6倍深层中心放大（应对教室后排远摄）、以及全画面
+          frameTick = (frameTick + 1) % 8;
+
+          let sx = 0, sy = 0, cropSize = minDim;
           const baseZoom = Math.max(1.0, currentCameraZoom);
-          const effectiveZoom = frameTick === 0
-            ? baseZoom
-            : (frameTick === 1 ? Math.min(5.0, baseZoom * 1.6) : 1.0);
 
-          const cropSize = Math.max(120, Math.floor(minDim / effectiveZoom));
-          const sx = Math.floor((vw - cropSize) / 2);
-          const sy = Math.floor((vh - cropSize) / 2);
+          // 8级多尺度+智能小码追踪金字塔：哪怕二维码在取景框里很小，也会在底层直接超分放大到 960x960 识别！
+          if (frameTick === 0) {
+            // 智能探测画面中的小二维码高对比候选块并直接超分放大
+            const roi = _detectSmallQrCandidateInVideo(videoEl);
+            if (roi) {
+              sx = roi.sx;
+              sy = roi.sy;
+              cropSize = roi.side;
+              // 若开启了【🤖 自动拉近】且用户未手动干预，发现二维码偏小时自动把镜头拉近到最佳识别尺寸！
+              const nowZ = Date.now();
+              if (isAutoZoomEnabled && (nowZ - lastManualZoomTs > 4500) && (nowZ - lastAutoZoomStepTs > 680)) {
+                lastAutoZoomStepTs = nowZ;
+                if (roi.qrRatio < 0.36) {
+                  const neededZoom = Math.min(4.5, Math.max(1.5, Math.round((0.48 / roi.qrRatio) * 10) / 10));
+                  if (Math.abs(neededZoom - currentCameraZoom) >= 0.3) {
+                    setCameraZoom(neededZoom, false);
+                  }
+                }
+              }
+            } else {
+              cropSize = Math.max(96, Math.floor(minDim / Math.min(5.5, baseZoom * 2.2)));
+              sx = Math.floor((vw - cropSize) / 2);
+              sy = Math.floor((vh - cropSize) / 2);
+            }
+          } else {
+            // 多尺度中心深层放大 (1.0x ~ 5.5x) + 上下左右偏心扫描
+            const scaleMultipliers = [1.0, 1.8, 2.8, 4.0, 5.2, 2.4, 2.4, 3.4];
+            const mult = scaleMultipliers[frameTick] || 2.0;
+            const effectiveZoom = frameTick === 1 ? baseZoom : Math.min(5.8, Math.max(1.0, baseZoom * mult * 0.75));
+            cropSize = Math.max(88, Math.floor(minDim / effectiveZoom));
+            sx = Math.floor((vw - cropSize) / 2);
+            sy = Math.floor((vh - cropSize) / 2);
+            if (frameTick === 5) {
+              sy = Math.max(0, Math.floor(sy - cropSize * 0.28));
+            } else if (frameTick === 6) {
+              sy = Math.min(vh - cropSize, Math.floor(sy + cropSize * 0.28));
+            }
+          }
 
-          ctx.drawImage(videoEl, sx, sy, cropSize, cropSize, 0, 0, 720, 720);
+          // 若持续未扫出且开启了自动拉近，每 850ms 自动巡航拉近镜头到需求大小
+          const nowCruise = Date.now();
+          if (isAutoZoomEnabled && (nowCruise - lastManualZoomTs > 4500) && (nowCruise - lastAutoZoomStepTs > 850)) {
+            lastAutoZoomStepTs = nowCruise;
+            const nextCruiseZ = cruiseZoomSteps[autoZoomCruiseIndex % cruiseZoomSteps.length];
+            autoZoomCruiseIndex++;
+            setCameraZoom(nextCruiseZ, false);
+          }
+
+          ctx.drawImage(videoEl, sx, sy, cropSize, cropSize, 0, 0, 960, 960);
 
           if (nativeBarcodeDetector) {
             try {
@@ -1312,7 +1476,7 @@
           }
 
           if (typeof window.jsQR === "function") {
-            const imgData = ctx.getImageData(0, 0, 720, 720);
+            const imgData = ctx.getImageData(0, 0, 960, 960);
             const code = window.jsQR(imgData.data, imgData.width, imgData.height, {
               inversionAttempts: "attemptBoth"
             });
@@ -1322,13 +1486,16 @@
             }
           }
 
-          // 3. 实时视频流后台 C++ 协同超清解码（每 850ms 自动抓取一帧送往电脑端 zxing-cpp + OpenCV 多尺度抗摩尔纹引擎）：
-          // 彻底解决部分同学手机浏览器不支持 BarcodeDetector、校园网大屏摩尔纹/反光导致实时取景框一直扫不出来的问题！
+          // 3. 实时视频流后台 C++ 协同超清解码（每 550ms 自动抓取 1280x1280 原生高清传感器帧送往电脑端 zxing-cpp + OpenCV 小码超分引擎）
           const nowMs = Date.now();
-          if (!isBackendLiveFrameDecoding && !isSubmittingQr && (nowMs - lastBackendFrameDecodeTs >= 850)) {
+          if (!isBackendLiveFrameDecoding && !isSubmittingQr && (nowMs - lastBackendFrameDecodeTs >= 550)) {
             isBackendLiveFrameDecoding = true;
             lastBackendFrameDecodeTs = nowMs;
-            offscreenCropCanvas.toBlob(async blob => {
+            const bCrop = Math.max(240, Math.floor(minDim / Math.max(1.0, currentCameraZoom * 0.85)));
+            const bsx = Math.floor((vw - bCrop) / 2);
+            const bsy = Math.floor((vh - bCrop) / 2);
+            bCtx.drawImage(videoEl, bsx, bsy, bCrop, bCrop, 0, 0, 1280, 1280);
+            backendFrameCanvas.toBlob(async blob => {
               try {
                 if (!blob || !isCameraRunning || isSubmittingQr) return;
                 const fd = new FormData();
@@ -1347,10 +1514,10 @@
               } finally {
                 isBackendLiveFrameDecoding = false;
               }
-            }, "image/jpeg", 0.85);
+            }, "image/jpeg", 0.88);
           }
         } catch (e) {}
-      }, 150);
+      }, 105);
     }
 
     function _stopZoomCropDecoderLoop() {
@@ -1386,19 +1553,21 @@
         setRelayModeUI(false, []);
         btn.textContent = "⏹ 停止摄像头";
         isCameraRunning = true;
+        autoZoomCruiseIndex = 0;
+        lastAutoZoomStepTs = Date.now();
 
         await html5QrCode.start(
           { facingMode: "environment" },
           {
-            fps: 15,
+            fps: 20,
             qrbox: (viewfinderWidth, viewfinderHeight) => {
-              const side = Math.floor(Math.min(viewfinderWidth, viewfinderHeight) * 0.85);
-              return { width: Math.max(200, side), height: Math.max(200, side) };
+              const side = Math.floor(Math.min(viewfinderWidth, viewfinderHeight) * 0.88);
+              return { width: Math.max(220, side), height: Math.max(220, side) };
             },
             videoConstraints: {
               facingMode: "environment",
-              width: { ideal: 1920 },
-              height: { ideal: 1080 }
+              width: { ideal: 2560 },
+              height: { ideal: 1440 }
             }
           },
           async decodedText => {
@@ -1407,16 +1576,20 @@
           () => {}
         );
 
-        // 启动后立即应用当前设置的变焦倍率并开启中心高清裁切解码循环
+        // 启动后若处于 1.0x 且开启了自动拉近，默认起步拉近至 1.6x（黄金课堂距离），并立即启动 8 级小码超分解码循环
         setTimeout(() => {
-          _applyZoomToActiveVideo(currentCameraZoom);
+          if (isAutoZoomEnabled && currentCameraZoom <= 1.05) {
+            setCameraZoom(1.6, false);
+          } else {
+            _applyZoomToActiveVideo(currentCameraZoom);
+          }
           _startZoomCropDecoderLoop();
-        }, 250);
+        }, 220);
       } catch (err) {
         isCameraRunning = false;
         _stopZoomCropDecoderLoop();
         btn.textContent = "🎥 实时取景扫码";
-        alert("无法打开实时视频流，请确认使用 https:// 链接访问并允许摄像头权限，或点击右侧【📸 原生相机快扫】！");
+        alert("无法打开实时视频流，请确认使用 https:// 链接访问并允许摄像头权限，或点击右侧【📸 拍照/相册选图快扫】！");
       }
     }
 
@@ -1445,19 +1618,19 @@
       const ctx = canvas.getContext("2d", { willReadFrequently: true });
       const minDim = Math.min(iw, ih);
 
-      // 构造候选裁切区域：全图 + 中心多级缩放 (75%, 52%, 36%, 24%) + 3x3 网格（应对二维码偏离中心）
+      // 构造候选裁切区域：全图 + 中心6级缩放 (75%, 52%, 36%, 24%, 16%, 11%) + 3x3 网格（应对二维码偏小或偏离中心）
       const regions = [
         { sx: 0, sy: 0, sw: iw, sh: ih, outW: Math.min(1200, iw), outH: Math.min(1200, ih) }
       ];
-      for (const ratio of [0.75, 0.52, 0.36, 0.24]) {
-        const side = Math.max(120, Math.floor(minDim * ratio));
+      for (const ratio of [0.75, 0.52, 0.36, 0.24, 0.16, 0.11]) {
+        const side = Math.max(72, Math.floor(minDim * ratio));
         regions.push({
           sx: Math.floor((iw - side) / 2),
           sy: Math.floor((ih - side) / 2),
           sw: side,
           sh: side,
-          outW: 800,
-          outH: 800
+          outW: 960,
+          outH: 960
         });
       }
       const winW = Math.floor(iw * 0.48);
