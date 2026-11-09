@@ -214,8 +214,16 @@
           </button>
         </div>
         <div id="sim-qr-box" class="hidden pt-2 border-t border-slate-800 text-center space-y-2">
-          <p class="text-[11px] text-slate-300">👇 长按下方二维码可保存到手机相册，然后点上方【📸 拍照/相册选图快扫】即可实测图片解码与签到全流程：</p>
-          <img id="sim-qr-img" src="" alt="模拟课堂签到二维码" class="w-44 h-44 mx-auto rounded-lg border-4 border-white shadow-md bg-white" />
+          <div class="flex items-center justify-between text-[11px] text-slate-300">
+            <span>👇 可切换下方模拟码大小实测远距小码直扫/自动拉近：</span>
+            <div class="flex gap-1">
+              <button type="button" onclick="setSimQrDisplaySize('normal')" class="px-1.5 py-0.5 rounded bg-indigo-600 text-white text-[10px]">标准</button>
+              <button type="button" onclick="setSimQrDisplaySize('small')" class="px-1.5 py-0.5 rounded bg-slate-800 text-amber-300 border border-amber-500/40 text-[10px]">🔍 远距小码</button>
+            </div>
+          </div>
+          <div class="py-3 bg-slate-950/80 rounded-xl flex items-center justify-center min-h-[190px]">
+            <img id="sim-qr-img" src="" alt="模拟课堂签到二维码" class="w-44 h-44 mx-auto rounded-lg border-4 border-white shadow-md bg-white transition-all duration-300" />
+          </div>
           <div class="text-[11px] text-emerald-400 font-mono">模拟活动 ID: 9988776655 (不会向超星发送错误请求)</div>
         </div>
       </div>
@@ -568,6 +576,16 @@
         box.classList.remove("hidden");
       } else {
         box.classList.add("hidden");
+      }
+    }
+
+    function setSimQrDisplaySize(mode) {
+      const img = document.getElementById("sim-qr-img");
+      if (!img) return;
+      if (mode === "small") {
+        img.className = "w-14 h-14 mx-auto rounded border-2 border-white shadow-md bg-white transition-all duration-300";
+      } else {
+        img.className = "w-44 h-44 mx-auto rounded-lg border-4 border-white shadow-md bg-white transition-all duration-300";
       }
     }
 
@@ -1385,8 +1403,9 @@
       if (!offscreenCropCanvas) {
         offscreenCropCanvas = document.createElement("canvas");
       }
-      offscreenCropCanvas.width = 960;
-      offscreenCropCanvas.height = 960;
+      // 560x560 为 jsQR 局部二值化算法与 Vision BarcodeDetector 的黄金分辨率（兼顾 Version 7 密集课堂码与极速帧率）
+      offscreenCropCanvas.width = 560;
+      offscreenCropCanvas.height = 560;
       const ctx = offscreenCropCanvas.getContext("2d", { willReadFrequently: true });
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = "high";
@@ -1399,7 +1418,8 @@
       const bCtx = backendFrameCanvas.getContext("2d", { willReadFrequently: true });
 
       let frameTick = 0;
-      const cruiseZoomSteps = [1.5, 2.2, 3.0, 3.8, 1.8, 2.6];
+      let backendTick = 0;
+      const cruiseZoomSteps = [1.5, 2.1, 2.8, 3.5, 1.8, 2.4];
 
       zoomCropTimer = setInterval(async () => {
         if (!isCameraRunning || isSubmittingQr) return;
@@ -1415,9 +1435,8 @@
           let sx = 0, sy = 0, cropSize = minDim;
           const baseZoom = Math.max(1.0, currentCameraZoom);
 
-          // 8级多尺度+智能小码追踪金字塔：哪怕二维码在取景框里很小，也会在底层直接超分放大到 960x960 识别！
+          // 8级多尺度+智能小码追踪金字塔：无论二维码在取景框里是大是小，均在底层直接裁切超分识别！
           if (frameTick === 0) {
-            // 智能探测画面中的小二维码高对比候选块并直接超分放大
             const roi = _detectSmallQrCandidateInVideo(videoEl);
             if (roi) {
               sx = roi.sx;
@@ -1425,45 +1444,47 @@
               cropSize = roi.side;
               // 若开启了【🤖 自动拉近】且用户未手动干预，发现二维码偏小时自动把镜头拉近到最佳识别尺寸！
               const nowZ = Date.now();
-              if (isAutoZoomEnabled && (nowZ - lastManualZoomTs > 4500) && (nowZ - lastAutoZoomStepTs > 680)) {
+              if (isAutoZoomEnabled && (nowZ - lastManualZoomTs > 4500) && (nowZ - lastAutoZoomStepTs > 720)) {
                 lastAutoZoomStepTs = nowZ;
                 if (roi.qrRatio < 0.36) {
-                  const neededZoom = Math.min(4.5, Math.max(1.5, Math.round((0.48 / roi.qrRatio) * 10) / 10));
+                  const neededZoom = Math.min(4.2, Math.max(1.4, Math.round((0.46 / roi.qrRatio) * 10) / 10));
                   if (Math.abs(neededZoom - currentCameraZoom) >= 0.3) {
                     setCameraZoom(neededZoom, false);
                   }
                 }
               }
             } else {
-              cropSize = Math.max(96, Math.floor(minDim / Math.min(5.5, baseZoom * 2.2)));
+              cropSize = Math.max(96, Math.floor(minDim / Math.min(5.2, baseZoom * 2.0)));
               sx = Math.floor((vw - cropSize) / 2);
               sy = Math.floor((vh - cropSize) / 2);
             }
-          } else {
-            // 多尺度中心深层放大 (1.0x ~ 5.5x) + 上下左右偏心扫描
-            const scaleMultipliers = [1.0, 1.8, 2.8, 4.0, 5.2, 2.4, 2.4, 3.4];
-            const mult = scaleMultipliers[frameTick] || 2.0;
-            const effectiveZoom = frameTick === 1 ? baseZoom : Math.min(5.8, Math.max(1.0, baseZoom * mult * 0.75));
-            cropSize = Math.max(88, Math.floor(minDim / effectiveZoom));
+          } else if (frameTick === 4) {
+            // 始终保留一帧 1.0x 全视野扫描，确保近距离大二维码任何时候都能秒扫
+            cropSize = minDim;
             sx = Math.floor((vw - cropSize) / 2);
             sy = Math.floor((vh - cropSize) / 2);
-            if (frameTick === 5) {
-              sy = Math.max(0, Math.floor(sy - cropSize * 0.28));
-            } else if (frameTick === 6) {
-              sy = Math.min(vh - cropSize, Math.floor(sy + cropSize * 0.28));
+          } else {
+            // 多尺度中心深层放大 (1.4x ~ 5.2x) + 上下偏心扫描（专门攻克取景框内小二维码）
+            const fixedScales = [1.0, baseZoom, 1.8, 2.7, 1.0, 3.8, 4.8, 2.3];
+            const targetScale = fixedScales[frameTick] || 2.0;
+            cropSize = Math.max(88, Math.floor(minDim / targetScale));
+            sx = Math.floor((vw - cropSize) / 2);
+            sy = Math.floor((vh - cropSize) / 2);
+            if (frameTick === 7) {
+              sy = Math.max(0, Math.floor(sy - cropSize * 0.22));
             }
           }
 
-          // 若持续未扫出且开启了自动拉近，每 850ms 自动巡航拉近镜头到需求大小
+          // 若持续未扫出且开启了自动拉近，每 1100ms 平滑巡航拉近镜头到需求大小
           const nowCruise = Date.now();
-          if (isAutoZoomEnabled && (nowCruise - lastManualZoomTs > 4500) && (nowCruise - lastAutoZoomStepTs > 850)) {
+          if (isAutoZoomEnabled && (nowCruise - lastManualZoomTs > 4500) && (nowCruise - lastAutoZoomStepTs > 1100)) {
             lastAutoZoomStepTs = nowCruise;
             const nextCruiseZ = cruiseZoomSteps[autoZoomCruiseIndex % cruiseZoomSteps.length];
             autoZoomCruiseIndex++;
             setCameraZoom(nextCruiseZ, false);
           }
 
-          ctx.drawImage(videoEl, sx, sy, cropSize, cropSize, 0, 0, 960, 960);
+          ctx.drawImage(videoEl, sx, sy, cropSize, cropSize, 0, 0, 560, 560);
 
           if (nativeBarcodeDetector) {
             try {
@@ -1476,7 +1497,7 @@
           }
 
           if (typeof window.jsQR === "function") {
-            const imgData = ctx.getImageData(0, 0, 960, 960);
+            const imgData = ctx.getImageData(0, 0, 560, 560);
             const code = window.jsQR(imgData.data, imgData.width, imgData.height, {
               inversionAttempts: "attemptBoth"
             });
@@ -1486,12 +1507,15 @@
             }
           }
 
-          // 3. 实时视频流后台 C++ 协同超清解码（每 550ms 自动抓取 1280x1280 原生高清传感器帧送往电脑端 zxing-cpp + OpenCV 小码超分引擎）
+          // 3. 实时视频流后台 C++ 协同超清解码（每 520ms 交替抓取全视野与变焦中心 1280x1280 原生帧送往电脑端 zxing-cpp + OpenCV 小码超分引擎）
           const nowMs = Date.now();
-          if (!isBackendLiveFrameDecoding && !isSubmittingQr && (nowMs - lastBackendFrameDecodeTs >= 550)) {
+          if (!isBackendLiveFrameDecoding && !isSubmittingQr && (nowMs - lastBackendFrameDecodeTs >= 520)) {
             isBackendLiveFrameDecoding = true;
             lastBackendFrameDecodeTs = nowMs;
-            const bCrop = Math.max(240, Math.floor(minDim / Math.max(1.0, currentCameraZoom * 0.85)));
+            backendTick = (backendTick + 1) % 2;
+            const bCrop = backendTick === 0
+              ? minDim
+              : Math.max(240, Math.floor(minDim / Math.max(1.0, currentCameraZoom)));
             const bsx = Math.floor((vw - bCrop) / 2);
             const bsy = Math.floor((vh - bCrop) / 2);
             bCtx.drawImage(videoEl, bsx, bsy, bCrop, bCrop, 0, 0, 1280, 1280);
