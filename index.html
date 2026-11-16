@@ -64,11 +64,105 @@
       opacity: 0;
       transform: translate(-50%, -12px) scale(0.95);
     }
+    /* 实时扫码激光扫描线与定格冻结层 */
+    @keyframes cxScanSweep {
+      0% { top: 8%; opacity: 0.35; }
+      50% { top: 88%; opacity: 0.95; }
+      100% { top: 8%; opacity: 0.35; }
+    }
+    .qr-scan-line {
+      position: absolute;
+      left: 6%;
+      right: 6%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #34d399, #6ee7b7, #34d399, transparent);
+      box-shadow: 0 0 10px rgba(52, 211, 153, 0.9);
+      animation: cxScanSweep 2.1s ease-in-out infinite;
+      pointer-events: none;
+    }
+    #qr-freeze-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 0.75rem;
+      z-index: 15;
+      transform-origin: center center;
+    }
+    #qr-freeze-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 25;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(2, 6, 23, 0.42);
+      backdrop-filter: blur(1.5px);
+      pointer-events: none;
+      padding: 1rem;
+      text-align: center;
+    }
+    #qr-freeze-overlay.hidden, #qr-freeze-canvas.hidden {
+      display: none !important;
+    }
+    .qr-freeze-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1rem;
+      border-radius: 9999px;
+      background: rgba(6, 78, 59, 0.92);
+      border: 1.5px solid rgba(52, 211, 153, 0.85);
+      color: #ecfdf5;
+      font-size: 0.8rem;
+      font-weight: 700;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+    }
+    .qr-freeze-badge.is-fail {
+      background: rgba(136, 19, 55, 0.92);
+      border-color: rgba(251, 113, 133, 0.85);
+      color: #fff1f2;
+    }
+    .qr-freeze-badge.is-relay {
+      background: rgba(120, 53, 15, 0.92);
+      border-color: rgba(251, 191, 36, 0.85);
+      color: #fef3c7;
+    }
+    /* 扫码失败 / 接力重试交互弹窗 */
+    #sign-retry-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: rgba(2, 6, 23, 0.78);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    #sign-retry-modal.hidden {
+      display: none !important;
+    }
+    .retry-modal-card {
+      width: 100%;
+      max-width: 24rem;
+      background: #0f172a;
+      border: 1.5px solid rgba(251, 113, 133, 0.55);
+      border-radius: 1rem;
+      padding: 1.15rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.65);
+      color: #f8fafc;
+    }
+    .retry-modal-card.is-relay {
+      border-color: rgba(251, 191, 36, 0.65);
+    }
   </style>
 </head>
 <body class="min-h-screen pb-20">
 
-  <!-- 签到成功/失败居中弹出浮层提示 (成功自动渐淡消失，失败弹出并自动重开实时扫码框) -->
+  <!-- 签到成功/失败居中弹出浮层提示 (成功自动渐淡消失) -->
   <div id="sign-popup-toast" class="hidden">
     <div id="sign-popup-card" class="w-full max-w-xs mx-auto rounded-2xl p-4 shadow-2xl border backdrop-blur-sm text-center space-y-2">
       <div id="sign-popup-icon" class="text-3xl leading-none">✅</div>
@@ -76,6 +170,41 @@
       <div id="sign-popup-sub" class="text-xs font-medium text-emerald-300/90 leading-relaxed"></div>
       <div id="sign-popup-details" class="hidden text-[11px] font-mono text-slate-200 bg-slate-950/70 rounded-xl p-2 space-y-0.5 text-left"></div>
       <div id="sign-popup-footer-hint" class="text-[10px] text-slate-300/80 pt-0.5"></div>
+    </div>
+  </div>
+
+  <!-- 扫码失败 / 待补签交互弹窗 (暂停画面后由用户选择重试，彻底杜绝后台连发重复请求) -->
+  <div id="sign-retry-modal" class="hidden">
+    <div id="sign-retry-card" class="retry-modal-card space-y-3">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span id="retry-modal-icon" class="text-2xl leading-none">❌</span>
+          <div>
+            <h3 id="retry-modal-title" class="text-sm font-bold text-white">签到未通过</h3>
+            <p id="retry-modal-sub" class="text-[11px] text-slate-400 mt-0.5">画面已定格暂停，未重复提交</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeRetryModalAndStop()" class="w-7 h-7 rounded-lg bg-slate-800 text-slate-400 hover:text-white text-sm font-bold">✕</button>
+      </div>
+
+      <div id="retry-modal-details" class="text-[11px] font-mono text-slate-200 bg-slate-950/80 border border-slate-800 rounded-xl p-2.5 space-y-1 max-h-40 overflow-y-auto"></div>
+
+      <div class="space-y-2 pt-1">
+        <button type="button" id="btn-retry-scan" onclick="retryQrScanFromModal()" class="w-full py-2.5 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-lg active:scale-95 transition">
+          🔄 重新扫码重试
+        </button>
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" id="btn-retry-resubmit" onclick="resubmitCurrentQrFromModal()" class="py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-sky-300 font-semibold text-xs active:scale-95 transition">
+            🔁 重发当前码
+          </button>
+          <button type="button" id="btn-retry-photo" onclick="retryPhotoScanFromModal()" class="hidden py-2 px-2.5 rounded-xl bg-emerald-600/20 border border-emerald-500/40 text-emerald-300 font-semibold text-xs active:scale-95 transition">
+            📸 重新选图/拍照
+          </button>
+          <button type="button" id="btn-retry-cancel" onclick="closeRetryModalAndStop()" class="py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-medium text-xs active:scale-95 transition">
+            ⏹ 停止并关闭
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -230,9 +359,9 @@
         <button onclick="toggleCameraScanner()" id="btn-camera" class="py-3 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-indigo-600/30 active:scale-95 transition">
           <span>🎥 实时取景扫码</span>
         </button>
-        <label class="py-3 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-600/30 active:scale-95 transition cursor-pointer text-center">
+        <label onclick="unlockFeedbackAudio()" class="py-3 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-600/30 active:scale-95 transition cursor-pointer text-center">
           <span id="lbl-photo-scan">📸 拍照 / 相册选图快扫</span>
-          <input type="file" accept="image/*" onchange="scanFromImageFile(event)" class="hidden" />
+          <input id="input-photo-scan" type="file" accept="image/*" onchange="scanFromImageFile(event)" class="hidden" />
         </label>
       </div>
 
@@ -454,6 +583,15 @@
     let activeCameraStream = null;
     let isCameraRunning = false;
     let isSubmittingQr = false;
+    let isScanFrozen = false;
+    let isDecodingFrame = false;
+    let activeScanSessionId = 0;
+    let _cxAudioCtx = null;
+    let lastRetryContext = {
+      source: "camera",
+      needRelay: false,
+      pendingAccounts: []
+    };
     let isQrBoxExpanded = false;
     let currentCameraZoom = 1.0;
     let currentHwZoom = 1.0;
@@ -1388,13 +1526,13 @@
         iconEl.textContent = "⚡";
         titleEl.className = "text-base font-extrabold tracking-wide text-amber-200";
         subEl.className = "text-xs font-medium text-amber-300/90 leading-relaxed";
-        hintEl.textContent = "🎥 实时扫码框已保持开启 · 正自动捕捉下一帧";
+        hintEl.textContent = "请在弹窗中选择是否继续补签";
       } else {
         card.className = "w-full max-w-xs rounded-2xl p-4 border-2 border-rose-400/85 bg-rose-950/95 text-center space-y-2 shadow-2xl";
         iconEl.textContent = "❌";
         titleEl.className = "text-base font-extrabold tracking-wide text-rose-200";
         subEl.className = "text-xs font-medium text-rose-300/90 leading-relaxed";
-        hintEl.textContent = "🎥 已全自动重开实时扫码框 · 对准二维码即刻重扫";
+        hintEl.textContent = "已暂停执行，请查看详细原因或重试";
       }
 
       titleEl.textContent = titleText || "";
@@ -1583,7 +1721,281 @@
       }, { passive: false });
     }
 
-    // 确保实时取景扫码框处于开启状态（签到失败或动态码接力时全自动开启/保持常开）
+    // ==================== 类学习通原生声音、震动、定格与防误触重试弹窗 ====================
+
+    function unlockFeedbackAudio() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        if (!_cxAudioCtx) {
+          _cxAudioCtx = new AudioCtx();
+        }
+        if (_cxAudioCtx.state === "suspended") {
+          _cxAudioCtx.resume().catch(() => {});
+        }
+        // iOS Safari 解锁静默 1-sample 缓冲区
+        const buf = _cxAudioCtx.createBuffer(1, 1, 22050);
+        const src = _cxAudioCtx.createBufferSource();
+        src.buffer = buf;
+        src.connect(_cxAudioCtx.destination);
+        src.start(0);
+      } catch (e) {}
+    }
+
+    function playScanTone(kind = "capture") {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        if (!_cxAudioCtx) {
+          _cxAudioCtx = new AudioCtx();
+        }
+        if (_cxAudioCtx.state === "suspended") {
+          _cxAudioCtx.resume().catch(() => {});
+        }
+        const ctx = _cxAudioCtx;
+        const now = ctx.currentTime;
+
+        const beepNote = (freq, startOffset, dur, peakGain = 0.28, wave = "sine") => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = wave;
+          osc.frequency.setValueAtTime(freq, now + startOffset);
+          gain.gain.setValueAtTime(0.0001, now + startOffset);
+          gain.gain.exponentialRampToValueAtTime(peakGain, now + startOffset + 0.01);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + startOffset + dur);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now + startOffset);
+          osc.stop(now + startOffset + dur + 0.015);
+        };
+
+        if (kind === "capture") {
+          // 扫到码瞬间清脆“滴”一声
+          beepNote(1950, 0, 0.085, 0.30, "sine");
+        } else if (kind === "success") {
+          // 签到全部成功提示双音
+          beepNote(1318, 0, 0.075, 0.24, "sine");
+          beepNote(1760, 0.085, 0.14, 0.26, "sine");
+        } else if (kind === "fail") {
+          // 签到失败警示双低音
+          beepNote(520, 0, 0.09, 0.24, "triangle");
+          beepNote(370, 0.105, 0.15, 0.24, "triangle");
+        }
+      } catch (e) {}
+    }
+
+    function triggerScanVibrate(pattern) {
+      try {
+        if (navigator && typeof navigator.vibrate === "function") {
+          navigator.vibrate(pattern);
+        }
+      } catch (e) {}
+    }
+
+    function _updateFreezeOverlay(text, mode = "loading") {
+      const overlay = document.getElementById("qr-freeze-overlay");
+      const badge = overlay ? overlay.querySelector(".qr-freeze-badge") : null;
+      const textEl = document.getElementById("qr-freeze-text");
+      if (!overlay || !badge || !textEl) return;
+      badge.classList.remove("is-fail", "is-relay");
+      if (mode === "fail") {
+        badge.classList.add("is-fail");
+      } else if (mode === "relay") {
+        badge.classList.add("is-relay");
+      }
+      textEl.textContent = text;
+      overlay.classList.remove("hidden");
+    }
+
+    function freezeCameraFrame(roi = null, overlayText = "🎯 已扫到二维码 · 正在提交签到...") {
+      try {
+        const videoEl = document.getElementById("qr-live-video");
+        const freezeCanvas = document.getElementById("qr-freeze-canvas");
+        const scanLine = document.getElementById("qr-scan-line");
+        if (scanLine) scanLine.classList.add("hidden");
+
+        if (videoEl && freezeCanvas && videoEl.videoWidth > 0 && videoEl.videoHeight > 0) {
+          const vw = videoEl.videoWidth;
+          const vh = videoEl.videoHeight;
+          freezeCanvas.width = vw;
+          freezeCanvas.height = vh;
+          freezeCanvas.style.transform = videoEl.style.transform || "scale(1)";
+          const fCtx = freezeCanvas.getContext("2d");
+          fCtx.drawImage(videoEl, 0, 0, vw, vh);
+
+          // 在冻结画面上标注绿色扫描锁定锚点 / 中心绿点（仿微信/学习通原生扫码锁定）
+          const cx = roi && roi.sx !== undefined ? (roi.sx + roi.side * 0.5) : (vw * 0.5);
+          const cy = roi && roi.sy !== undefined ? (roi.sy + roi.side * 0.5) : (vh * 0.5);
+          const rDot = Math.max(18, Math.min(vw, vh) * 0.036);
+
+          if (roi && roi.side) {
+            fCtx.save();
+            fCtx.strokeStyle = "#34d399";
+            fCtx.lineWidth = Math.max(4, Math.min(vw, vh) * 0.007);
+            fCtx.strokeRect(roi.sx, roi.sy, roi.side, roi.side);
+            fCtx.restore();
+          }
+
+          fCtx.save();
+          fCtx.beginPath();
+          fCtx.arc(cx, cy, rDot, 0, Math.PI * 2);
+          fCtx.fillStyle = "rgba(16, 185, 129, 0.92)";
+          fCtx.fill();
+          fCtx.lineWidth = Math.max(4, rDot * 0.24);
+          fCtx.strokeStyle = "#ffffff";
+          fCtx.stroke();
+          fCtx.restore();
+
+          freezeCanvas.classList.remove("hidden");
+          try {
+            videoEl.pause();
+          } catch (e) {}
+        }
+        _updateFreezeOverlay(overlayText, "loading");
+      } catch (e) {}
+    }
+
+    function unfreezeCameraFrame() {
+      isScanFrozen = false;
+      isDecodingFrame = false;
+      activeScanSessionId++;
+      const freezeCanvas = document.getElementById("qr-freeze-canvas");
+      const overlay = document.getElementById("qr-freeze-overlay");
+      const scanLine = document.getElementById("qr-scan-line");
+      const videoEl = document.getElementById("qr-live-video");
+
+      if (freezeCanvas) freezeCanvas.classList.add("hidden");
+      if (overlay) overlay.classList.add("hidden");
+      if (scanLine) scanLine.classList.remove("hidden");
+      if (videoEl && videoEl.srcObject) {
+        videoEl.play().catch(() => {});
+      }
+      if (isCameraRunning) {
+        _startZoomCropDecoderLoop();
+      }
+    }
+
+    function openSignRetryModal({
+      title = "❌ 签到未通过",
+      sub = "画面已静止暂停，不会在后台重复发包",
+      details = [],
+      isRelay = false,
+      source = "camera",
+      pendingAccounts = [],
+      canResubmit = true
+    }) {
+      lastRetryContext = {
+        source,
+        needRelay: Boolean(isRelay),
+        pendingAccounts: pendingAccounts || []
+      };
+      const modal = document.getElementById("sign-retry-modal");
+      const card = document.getElementById("sign-retry-card");
+      const iconEl = document.getElementById("retry-modal-icon");
+      const titleEl = document.getElementById("retry-modal-title");
+      const subEl = document.getElementById("retry-modal-sub");
+      const detailsEl = document.getElementById("retry-modal-details");
+      const btnScan = document.getElementById("btn-retry-scan");
+      const btnResubmit = document.getElementById("btn-retry-resubmit");
+      const btnPhoto = document.getElementById("btn-retry-photo");
+      if (!modal || !card) return;
+
+      card.classList.toggle("is-relay", Boolean(isRelay));
+      iconEl.textContent = isRelay ? "⚡" : "❌";
+      titleEl.textContent = title;
+      subEl.textContent = sub;
+
+      if (details && details.length > 0) {
+        detailsEl.innerHTML = details.map(line => `<div class="break-all">${line}</div>`).join("");
+        detailsEl.classList.remove("hidden");
+      } else {
+        detailsEl.innerHTML = `<div class="text-slate-400">未获取到具体返回明细，请对准有效二维码重新扫码。</div>`;
+      }
+
+      if (isRelay) {
+        btnScan.textContent = "⚡ 继续扫码为小号补签";
+      } else if (source === "photo") {
+        btnScan.textContent = "🎥 改用实时取景扫码";
+      } else {
+        btnScan.textContent = "🔄 重新扫码重试";
+      }
+
+      const hasQrText = Boolean((document.getElementById("qr-text-input")?.value || "").trim());
+      if (btnResubmit) {
+        btnResubmit.classList.toggle("hidden", !(canResubmit && hasQrText));
+      }
+      if (btnPhoto) {
+        btnPhoto.classList.toggle("hidden", source !== "photo");
+      }
+
+      modal.classList.remove("hidden");
+    }
+
+    function closeSignRetryModal() {
+      const modal = document.getElementById("sign-retry-modal");
+      if (modal) modal.classList.add("hidden");
+    }
+
+    async function retryQrScanFromModal() {
+      unlockFeedbackAudio();
+      closeSignRetryModal();
+      const ctx = lastRetryContext || {};
+      if (!ctx.needRelay) {
+        consumedEncSet.clear();
+        setRelayModeUI(false, []);
+      } else {
+        setRelayModeUI(true, ctx.pendingAccounts || []);
+      }
+      switchTab("tab-qr");
+      if (isCameraRunning) {
+        unfreezeCameraFrame();
+      } else {
+        await toggleCameraScanner(Boolean(ctx.needRelay), ctx.pendingAccounts || []);
+      }
+    }
+
+    function retryPhotoScanFromModal() {
+      unlockFeedbackAudio();
+      closeSignRetryModal();
+      const inp = document.getElementById("input-photo-scan");
+      if (inp) inp.click();
+    }
+
+    async function resubmitCurrentQrFromModal() {
+      unlockFeedbackAudio();
+      closeSignRetryModal();
+      const ctx = lastRetryContext || {};
+      const targets = ctx.needRelay && ctx.pendingAccounts && ctx.pendingAccounts.length > 0
+        ? ctx.pendingAccounts
+        : getAllAccountKeys();
+      if (isCameraRunning) {
+        _updateFreezeOverlay("⏳ 正在重新提交当前二维码...", "loading");
+      }
+      const data = await submitSign("qr", targets, Boolean(ctx.needRelay), { fromCamera: isCameraRunning });
+      const results = (data && data.results) ? data.results : [];
+      const allSucceeded = results.length > 0 && results.every(r => r.success);
+      if (allSucceeded && (!data || !data.need_sub_relay)) {
+        if (isCameraRunning) {
+          _updateFreezeOverlay("✅ 签到成功！", "loading");
+          setTimeout(() => stopCameraScannerCleanly(), 600);
+        }
+      } else if (isCameraRunning) {
+        const isRelay = Boolean(data && data.need_sub_relay);
+        _updateFreezeOverlay(
+          isRelay ? "⚡ 部分待补签 · 请点击弹窗继续" : "❌ 签到未通过 · 已暂停扫码",
+          isRelay ? "relay" : "fail"
+        );
+      }
+    }
+
+    async function closeRetryModalAndStop() {
+      closeSignRetryModal();
+      if (isCameraRunning) {
+        await stopCameraScannerCleanly();
+      }
+    }
+
+    // 确保实时取景扫码框处于开启状态（仅在需要唤醒实时扫码时调用）
     async function ensureCameraScannerRunning(keepRelay = false, pendingList = []) {
       switchTab("tab-qr");
       if (keepRelay) {
@@ -1593,44 +2005,58 @@
       }
       if (!isCameraRunning) {
         await toggleCameraScanner(keepRelay, pendingList);
+      } else if (isScanFrozen) {
+        unfreezeCameraFrame();
       }
     }
 
-    async function handleDecodedQrText(decodedText) {
-      if (!decodedText || isSubmittingQr) return;
+    async function handleDecodedQrText(decodedText, roi = null) {
+      // 原子门禁：一旦处于提交中或画面已定格，立即丢弃任何并发帧回调，杜绝重复提交！
+      if (!decodedText || isSubmittingQr || isScanFrozen) return;
       const currentEnc = extractEncFromText(decodedText);
-      // 若当前帧的 enc 已经提交过（尚未刷新下一帧），直接跳过等待大屏刷新
       if (currentEnc && consumedEncSet.has(currentEnc)) {
         return;
       }
+
+      isScanFrozen = true;
+      activeScanSessionId++;
+      _stopZoomCropDecoderLoop();
+
       if (currentEnc) {
         consumedEncSet.add(currentEnc);
       }
 
+      // 类学习通原生反馈：立即“滴”一声 + 细微震动 + 画面瞬间定格锁定
+      playScanTone("capture");
+      triggerScanVibrate([45]);
+      freezeCameraFrame(roi, "🎯 已扫到二维码 · 正在提交签到...");
+
       document.getElementById("qr-text-input").value = decodedText;
       parseQrInputPreview();
 
-      // 若当前处于“动态码接力模式”，专门只为未签成功的小号发起极速补签！
       const targets = isSubRelayMode
         ? (relayPendingAccounts.length > 0 ? relayPendingAccounts : getAllSubAccountKeys())
         : getAllAccountKeys();
-      const data = await submitSign("qr", targets, isSubRelayMode);
+      const data = await submitSign("qr", targets, isSubRelayMode, { fromCamera: true });
 
       const results = (data && data.results) ? data.results : [];
-      const allSucceeded = results.length > 0 && results.every(r => r.success);
+      const okCount = results.filter(r => r.success).length;
+      const allSucceeded = results.length > 0 && okCount === results.length;
 
       if (allSucceeded && (!data || !data.need_sub_relay)) {
-        // 全部签到成功：安全关闭扫码框（顶部弹窗已在 renderSignResults 中弹出并自动渐淡）
-        await stopCameraScannerCleanly();
-      } else if (data && data.need_sub_relay) {
-        // 小号待接力补签：保持扫码框常开，继续捕捉下一帧
-        await ensureCameraScannerRunning(true, data.relay_pending_accounts || []);
+        // 全部签到成功：绿色定格确认 650ms 后安全收起摄像头（成功音效与 Toast 已由 renderSignResults 触发）
+        _updateFreezeOverlay("✅ 签到成功！", "loading");
+        setRelayModeUI(false, []);
+        setTimeout(() => {
+          stopCameraScannerCleanly();
+        }, 650);
       } else {
-        // 签到失败：1.2秒后允许重新扫同一个码（比如刚刚调整了坐标或静态码重试），并确保实时扫码框全自动开启！
-        if (currentEnc) {
-          setTimeout(() => consumedEncSet.delete(currentEnc), 1200);
-        }
-        await ensureCameraScannerRunning(false, []);
+        // 签到失败或部分账号待补签：保持画面静止，停止后台自动连扫，交互弹窗已由 submitSign/renderSignResults 弹出
+        const isRelay = Boolean(data && data.need_sub_relay);
+        _updateFreezeOverlay(
+          isRelay ? "⚡ 部分待补签 · 请点击弹窗继续" : "❌ 签到未通过 · 已暂停扫码",
+          isRelay ? "relay" : "fail"
+        );
       }
     }
 
@@ -1903,10 +2329,11 @@
       let frameTick = 0;
 
       zoomCropTimer = setInterval(async () => {
-        if (!isCameraRunning || isSubmittingQr) return;
+        if (!isCameraRunning || isSubmittingQr || isScanFrozen || isDecodingFrame) return;
         const videoEl = document.querySelector("#qr-reader video");
         if (!videoEl || videoEl.readyState < 2 || !videoEl.videoWidth || !videoEl.videoHeight) return;
 
+        isDecodingFrame = true;
         try {
           const vw = videoEl.videoWidth;
           const vh = videoEl.videoHeight;
@@ -1920,7 +2347,6 @@
           const visibleSy = Math.floor((vh - visibleSide) / 2);
 
           // 1. 第一通道（每帧必扫）：直接对当前可见取景框 + 24px 纯白静区边框进行全尺寸识别
-          // 无论二维码占取景框 35% 还是 98% 贴边大码，一帧即可秒出！
           const hitVisible = await _decodeCropWithQuietZone(
             ctx,
             offscreenCropCanvas,
@@ -1932,15 +2358,13 @@
             frameTick % 2 === 0
           );
           if (hitVisible) {
-            await handleDecodedQrText(hitVisible);
+            await handleDecodedQrText(hitVisible, { sx: visibleSx, sy: visibleSy, side: visibleSide });
             return;
           }
 
-          // 2. 第二通道（类学习通智能锁定 + 多尺度深层直扫）：
-          // 检测可见区域内的二维码位置与尺寸占比
+          // 2. 第二通道（类学习通智能锁定 + 多尺度深层直扫）
           const roi = _detectQrFinderBoxInVideo(videoEl, visibleSx, visibleSy, visibleSide);
           if (roi) {
-            // 立即将检测到的二维码候选框抠出并放大至 420x420（开启对比度增强）直接识别！无需等镜头变焦完成就能先扫出来！
             const hitRoi = await _decodeCropWithQuietZone(
               ctx,
               offscreenCropCanvas,
@@ -1952,11 +2376,11 @@
               true
             );
             if (hitRoi) {
-              await handleDecodedQrText(hitRoi);
+              await handleDecodedQrText(hitRoi, roi);
               return;
             }
 
-            // 类学习通一步到位智能变焦：仅当检测到二维码偏小 (< 42%) 或偏大贴边 (> 82%) 时精准拉到黄金比例 (54%) 并锁定，绝不乱跳！
+            // 类学习通一步到位智能变焦：仅当检测到二维码偏小 (< 42%) 或偏大贴边 (> 82%) 时精准拉到黄金比例 (54%) 并锁定
             const nowZ = Date.now();
             if (isAutoZoomEnabled && (nowZ - lastManualZoomTs > 4500) && (nowZ - lastAutoZoomStepTs > 520)) {
               if (roi.qrRatio < 0.42) {
@@ -1968,7 +2392,6 @@
                   setCameraZoom(targetZ, false);
                 }
               } else if (roi.qrRatio > 0.82 && currentCameraZoom > 1.15) {
-                // 若二维码已经太大占满取景框，自动稍微缩小一点让三个定位角完整露出来
                 const targetZ = Math.max(1.0, Math.round(currentCameraZoom * 0.72 * 10) / 10);
                 if (Math.abs(targetZ - currentCameraZoom) >= 0.2) {
                   lastAutoZoomStepTs = nowZ;
@@ -1997,15 +2420,16 @@
             true
           );
           if (hitSub) {
-            await handleDecodedQrText(hitSub);
+            await handleDecodedQrText(hitSub, { sx: subSx, sy: subSy, side: subSide });
             return;
           }
 
-          // 4. 第四通道：后台 C++ zxing-cpp + OpenCV 协同解码（每 360ms 抓取 760x760 含白边高清帧送往电脑端解码）
+          // 4. 第四通道：后台 C++ zxing-cpp + OpenCV 协同解码（携带会话号防止过期异步帧竞态重复触发）
           const nowMs = Date.now();
-          if (!isBackendLiveFrameDecoding && !isSubmittingQr && (nowMs - lastBackendFrameDecodeTs >= 360)) {
+          if (!isBackendLiveFrameDecoding && !isSubmittingQr && !isScanFrozen && (nowMs - lastBackendFrameDecodeTs >= 360)) {
             isBackendLiveFrameDecoding = true;
             lastBackendFrameDecodeTs = nowMs;
+            const reqSessionId = activeScanSessionId;
             const bTarget = (roi && (frameTick % 2 === 1))
               ? { sx: roi.sx, sy: roi.sy, side: roi.side }
               : { sx: visibleSx, sy: visibleSy, side: visibleSide };
@@ -2014,7 +2438,7 @@
             bCtx.drawImage(videoEl, bTarget.sx, bTarget.sy, bTarget.side, bTarget.side, 28, 28, 704, 704);
             backendFrameCanvas.toBlob(async blob => {
               try {
-                if (!blob || !isCameraRunning || isSubmittingQr) return;
+                if (!blob || reqSessionId !== activeScanSessionId || !isCameraRunning || isSubmittingQr || isScanFrozen) return;
                 const fd = new FormData();
                 fd.append("file", blob, "live_frame.jpg");
                 const r = await apiFetch("/api/qr/decode-image", {
@@ -2023,8 +2447,8 @@
                 });
                 if (r && r.ok) {
                   const d = await r.json();
-                  if (d && d.qr_text && isCameraRunning && !isSubmittingQr) {
-                    await handleDecodedQrText(d.qr_text);
+                  if (d && d.qr_text && reqSessionId === activeScanSessionId && isCameraRunning && !isSubmittingQr && !isScanFrozen) {
+                    await handleDecodedQrText(d.qr_text, bTarget);
                   }
                 }
               } catch (err) {
@@ -2033,7 +2457,10 @@
               }
             }, "image/jpeg", 0.84);
           }
-        } catch (e) {}
+        } catch (e) {
+        } finally {
+          isDecodingFrame = false;
+        }
       }, 80);
     }
 
@@ -2045,7 +2472,11 @@
     }
 
     async function stopCameraScannerCleanly() {
+      isScanFrozen = false;
+      isDecodingFrame = false;
+      activeScanSessionId++;
       _stopZoomCropDecoderLoop();
+      closeSignRetryModal();
       if (activeCameraStream) {
         try {
           activeCameraStream.getTracks().forEach(t => t.stop());
@@ -2062,12 +2493,17 @@
     }
 
     async function toggleCameraScanner(keepRelay = false, pendingList = []) {
+      unlockFeedbackAudio();
       const btn = document.getElementById("btn-camera");
       if (isCameraRunning) {
         await stopCameraScannerCleanly();
         return;
       }
       try {
+        closeSignRetryModal();
+        isScanFrozen = false;
+        isDecodingFrame = false;
+        activeScanSessionId++;
         _preloadJsQrInBackground();
         if (!keepRelay) {
           consumedEncSet.clear();
@@ -2105,8 +2541,16 @@
         const box = document.getElementById("qr-reader");
         box.innerHTML = `
           <video id="qr-live-video" autoplay playsinline muted webkit-playsinline class="w-full h-full object-cover rounded-xl"></video>
-          <div class="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <div class="w-56 h-56 rounded-2xl border-2 border-emerald-400/80" style="box-shadow: 0 0 0 9999px rgba(2,6,23,0.38);"></div>
+          <canvas id="qr-freeze-canvas" class="hidden"></canvas>
+          <div id="qr-finder-guide" class="pointer-events-none absolute inset-0 flex items-center justify-center z-10">
+            <div class="relative w-56 h-56 rounded-2xl border-2 border-emerald-400/85 overflow-hidden" style="box-shadow: 0 0 0 9999px rgba(2,6,23,0.38);">
+              <div id="qr-scan-line" class="qr-scan-line"></div>
+            </div>
+          </div>
+          <div id="qr-freeze-overlay" class="hidden">
+            <div class="qr-freeze-badge">
+              <span id="qr-freeze-text">🎯 已扫到二维码 · 正在提交签到...</span>
+            </div>
           </div>
         `;
         const videoEl = document.getElementById("qr-live-video");
@@ -2118,6 +2562,7 @@
         _startZoomCropDecoderLoop();
       } catch (err) {
         isCameraRunning = false;
+        isScanFrozen = false;
         _stopZoomCropDecoderLoop();
         btn.textContent = "🎥 实时取景扫码";
         alert("无法打开实时视频流，请确认使用 https:// 链接访问并允许摄像头权限，或点击右侧【📸 拍照/相册选图快扫】！");
@@ -2248,8 +2693,9 @@
     async function scanFromImageFile(event) {
       const file = event.target.files[0];
       if (!file) return;
+      unlockFeedbackAudio();
       const lbl = document.getElementById("lbl-photo-scan");
-      const origLbl = lbl ? lbl.textContent : "📸 原生相机快扫";
+      const origLbl = lbl ? lbl.textContent : "📸 拍照 / 相册选图快扫";
       if (lbl) lbl.textContent = "⏳ 超清识别中...";
 
       try {
@@ -2262,7 +2708,7 @@
         // 1. 先用前端多尺度中心裁切 + iOS 原生 Vision / jsQR 极速识别
         let decodedText = img ? await _decodeFileInBrowserMultiScale(img) : null;
 
-        // 2. 若前端未命中（如后排远距离摩尔纹/强反光大屏），立即调用电脑端 C++ zxing-cpp + OpenCV 多尺度抗摩尔纹引擎解码
+        // 2. 若前端未命中（如后排远距离摩尔纹/强反光大屏），立即调用后端 C++ zxing-cpp + OpenCV 多尺度抗摩尔纹引擎解码
         if (!decodedText) {
           decodedText = await _decodeFileViaBackend(file, img);
         }
@@ -2271,39 +2717,43 @@
           throw new Error("未能在照片中识别出二维码");
         }
 
+        // 照片解码成功：立刻“滴”一声 + 微震反馈
+        playScanTone("capture");
+        triggerScanVibrate([45]);
+
         document.getElementById("qr-text-input").value = decodedText;
         parseQrInputPreview();
         const targets = isSubRelayMode
           ? (relayPendingAccounts.length > 0 ? relayPendingAccounts : getAllSubAccountKeys())
           : getAllAccountKeys();
-        const data = await submitSign("qr", targets, isSubRelayMode);
+        const data = await submitSign("qr", targets, isSubRelayMode, { fromPhoto: true });
         const results = (data && data.results) ? data.results : [];
         const allSucceeded = results.length > 0 && results.every(r => r.success);
 
         if (allSucceeded && (!data || !data.need_sub_relay)) {
           setRelayModeUI(false, []);
-          await stopCameraScannerCleanly();
-        } else if (data && data.need_sub_relay) {
-          await ensureCameraScannerRunning(true, data.relay_pending_accounts || []);
-        } else {
-          await ensureCameraScannerRunning(false, []);
+          if (isCameraRunning) {
+            await stopCameraScannerCleanly();
+          }
         }
       } catch (err) {
-        showSignPopupToast(
-          "fail",
-          "❌ 未识别到有效二维码",
-          "已自动为您开启实时取景扫码框，请对准二维码",
-          [err.message || "照片未检出二维码"],
-          2400
-        );
-        await ensureCameraScannerRunning(false, []);
+        playScanTone("fail");
+        triggerScanVibrate([90, 45, 90]);
+        openSignRetryModal({
+          title: "❌ 未识别到有效二维码",
+          sub: "照片未检出清晰二维码，请选择重试方式",
+          details: [err.message || "照片未检出二维码（建议靠近或改用实时取景扫码）"],
+          isRelay: false,
+          source: "photo",
+          canResubmit: false
+        });
       } finally {
         if (lbl) lbl.textContent = origLbl;
         event.target.value = "";
       }
     }
 
-    async function submitSign(mode, targetAccounts = ["main", "sub"], isRelayRetry = false) {
+    async function submitSign(mode, targetAccounts = ["main", "sub"], isRelayRetry = false, opts = {}) {
       if (isSubmittingQr) return null;
       isSubmittingQr = true;
       const btn = document.getElementById("btn-submit-qr");
@@ -2341,28 +2791,28 @@
         if (!res.ok) {
           throw new Error(data.detail || "签到请求失败");
         }
-        renderSignResults(data);
-        const results = (data && data.results) ? data.results : [];
-        const allSucceeded = results.length > 0 && results.every(r => r.success);
-        // 若用户通过底部按钮手动点击二维码签到且失败，同样自动弹出提示并开启实时扫码框
-        if (mode === "qr" && (!allSucceeded || data.need_sub_relay)) {
-          setTimeout(() => {
-            ensureCameraScannerRunning(Boolean(data.need_sub_relay), data.relay_pending_accounts || []);
-          }, 150);
-        }
+        renderSignResults(data, { signType: mode, ...opts });
         return data;
       } catch (e) {
-        showSignPopupToast(
-          "fail",
-          "❌ 签到请求失败",
-          e.message || "网络或参数异常",
-          [],
-          2500
-        );
         if (mode === "qr") {
-          setTimeout(() => {
-            ensureCameraScannerRunning(false, []);
-          }, 150);
+          playScanTone("fail");
+          triggerScanVibrate([90, 45, 90]);
+          openSignRetryModal({
+            title: "❌ 签到请求失败",
+            sub: "网络波动或参数校验异常，未重复提交",
+            details: [e.message || "网络或参数异常"],
+            isRelay: false,
+            source: opts.fromPhoto ? "photo" : "camera",
+            canResubmit: true
+          });
+        } else {
+          showSignPopupToast(
+            "fail",
+            "❌ 签到请求失败",
+            e.message || "网络或参数异常",
+            [],
+            2500
+          );
         }
         return null;
       } finally {
@@ -2372,7 +2822,7 @@
       }
     }
 
-    function renderSignResults(data) {
+    function renderSignResults(data, opts = {}) {
       const panel = document.getElementById("result-panel");
       const cards = document.getElementById("result-cards");
       document.getElementById("result-course-badge").textContent = `${data.course_name} (#${data.active_id})`;
@@ -2386,11 +2836,11 @@
         if (r.success) okCount++;
         const okStyle = r.success
           ? "border-emerald-500/40 bg-emerald-950/30"
-          : (r.is_qr_expired ? "border-amber-400/50 bg-amber-950/30" : "border-rose-500/40 bg-rose-950/30");
+          : (r.is_qr_expired && data.need_sub_relay ? "border-amber-400/50 bg-amber-950/30" : "border-rose-500/40 bg-rose-950/30");
         const icon = r.success
           ? "✅ 签到成功"
-          : (r.is_qr_expired ? "⏳ 二维码过期 (正接力捕捉下一帧)" : "❌ 签到失败");
-        const shortIcon = r.success ? "✅" : (r.is_qr_expired ? "⏳" : "❌");
+          : (r.is_qr_expired && data.need_sub_relay ? "⏳ 二维码过期 (待接力补签)" : "❌ 签到失败");
+        const shortIcon = r.success ? "✅" : (r.is_qr_expired && data.need_sub_relay ? "⏳" : "❌");
         const delayTag = r.stagger_delay_sec > 0 ? `错峰 +${r.stagger_delay_sec}s` : "0s 极速发包";
 
         popupDetails.push(`${shortIcon} ${r.alias}: ${r.raw_response} (${r.elapsed_ms}ms)`);
@@ -2414,32 +2864,42 @@
       });
       panel.classList.remove("hidden");
 
-      // 弹出式 HUD 结果通知（无需下滑查看：成功直接弹出并渐淡消失；失败弹出并全自动重开实时扫码框）
       const totalCount = results.length;
       const allOk = totalCount > 0 && okCount === totalCount && !data.need_sub_relay;
+      const isQrMode = (opts.signType || data.sign_type) === "qr";
+
       if (allOk) {
+        playScanTone("success");
+        triggerScanVibrate([35, 45, 70]);
         showSignPopupToast(
           "success",
           `✅ 签到成功 (${okCount}/${totalCount})`,
           `${data.course_name || "课堂签到"} · 已全部完成`,
           popupDetails,
-          1900
+          2300
         );
-      } else if (data.need_sub_relay) {
-        showSignPopupToast(
-          "relay",
-          `⚡ 动态码接力中 (${okCount}/${totalCount})`,
-          `实时扫码框已保持常开，正自动捕捉下一帧补签`,
-          popupDetails,
-          2400
-        );
+      } else if (isQrMode) {
+        playScanTone("fail");
+        triggerScanVibrate([90, 45, 90]);
+        const isRelay = Boolean(data.need_sub_relay);
+        openSignRetryModal({
+          title: isRelay ? `⚡ 部分待补签 (${okCount}/${totalCount})` : `❌ 签到未通过 (${okCount}/${totalCount})`,
+          sub: isRelay
+            ? "大号已签，小号遇动态码过期，请点击按钮继续扫码补签"
+            : `${data.course_name || "课堂签到"} · 画面已暂停，请选择是否重试`,
+          details: popupDetails,
+          isRelay,
+          source: opts.fromPhoto ? "photo" : "camera",
+          pendingAccounts: data.relay_pending_accounts || [],
+          canResubmit: true
+        });
       } else {
         showSignPopupToast(
           "fail",
           `❌ 签到未通过 (${okCount}/${totalCount})`,
-          `已全自动开启实时扫码框，对准二维码即刻重扫`,
+          `${data.course_name || "考勤请求"} · 请查看下方回执详情`,
           popupDetails,
-          2500
+          2600
         );
       }
     }
